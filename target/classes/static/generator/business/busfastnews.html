@@ -59,7 +59,6 @@
 					<option value="0">否</option>
 				</select>
 			</div>
-
             <!-- 如果操作非常少，2-3个就可以去掉 外面的div;否则请保留 -->
             <div class="form-group col-sm-12">
                 <a class="btn btn-primary btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
@@ -161,23 +160,40 @@
 					</select>
 			    </div>
 			</div>
-									<div class="form-group  col-md-6">
-			   	<div class="col-sm-3 control-label">是否7*24小时快讯</div>
-			   	<div class="col-sm-9">
+
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;利好</div>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" v-model="busFastNews.good" placeholder="阅读量"
+						   data-rule="利好:required;                          number;"
+					/>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;利空</div>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" v-model="busFastNews.bad" placeholder="阅读量"
+						   data-rule="利空:required;                          number;"
+					/>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label">是否7*24小时快讯</div>
+				<div class="col-sm-9">
 					<select name="isNewsFlash" class="form-control" v-model="busFastNews.isNewsFlash">
 						<option value="0">否</option>
 						<option value="1">是</option>
 					</select>
-			    </div>
+				</div>
 			</div>
 			<div class="form-group  col-md-12">
-				<div class="col-sm-2 control-label" style="width: 12.2%;"><span class="require">*</span>&nbsp;正文111</div>
+				<div class="col-sm-2 control-label" style="width: 12.2%;"><span class="require">*</span>&nbsp;正文</div>
 				<div class="col-sm-10" style="width: 87.8%;padding-left: 15px;">
 					<textarea style="max-width: 900px;min-width: 900px;max-height:300px;min-height:300px;height: 300px;" class="form-control" v-model="busFastNews.mainText"
 							  data-rule="正文:required; length(~30000)" placeholder="正文" maxlength="30000"></textarea>
 				</div>
 			</div>
-									<!--<div class="form-group  col-md-6">-->
+			<!--<div class="form-group  col-md-6">-->
 			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;阅读量</div>-->
 			   	<!--<div class="col-sm-9">-->
 			      <!--<input type="text" class="form-control" v-model="busFastNews.lookTimes" placeholder="阅读量"-->

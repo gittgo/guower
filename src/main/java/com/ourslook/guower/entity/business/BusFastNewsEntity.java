@@ -71,6 +71,16 @@ public class BusFastNewsEntity implements Serializable {
     /**
      * 果味指数
      */
+    @ApiModelProperty("利好")
+    private Integer good;
+    /**
+     * 果味指数
+     */
+    @ApiModelProperty("利空")
+    private Integer bad;
+    /**
+     * 果味指数
+     */
     @ApiModelProperty("果味指数")
     private Integer guowerIndex;
     /**
@@ -198,7 +208,23 @@ public class BusFastNewsEntity implements Serializable {
             this.fastnewsRemarks3 = fastnewsRemarks3 != null ? (fastnewsRemarks3).trim() : null;
     	}
 
-        public String getFastnewsRemarks3() {
+    public Integer getGood() {
+        return good;
+    }
+
+    public void setGood(Integer good) {
+        this.good = good;
+    }
+
+    public Integer getBad() {
+        return bad;
+    }
+
+    public void setBad(Integer bad) {
+        this.bad = bad;
+    }
+
+    public String getFastnewsRemarks3() {
 		return fastnewsRemarks3;
 	}
 
