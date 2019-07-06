@@ -51,4 +51,45 @@ public class AppApiFastNewsController {
         xr.setObject(busFastNewsService.queryList(query));
         return xr;
     }
+
+    /**
+     * 快报利好
+     */
+    @PostMapping("addgood")
+    @ApiOperation(value = "查询所有快报表信息")
+    @IgnoreAuth
+    @ResponseBody
+    public XaResult<BusFastNewsEntity> addgood(
+            @ApiParam("快报id") @RequestParam(defaultValue = "0") Integer id,
+            HttpServletRequest request
+    ) {
+
+        XaResult<BusFastNewsEntity> xr = new XaResult<>();
+        if(id==0){return xr;}
+        BusFastNewsEntity busFastNewsEntity = busFastNewsService.queryObject(id);
+        busFastNewsEntity.setGood(busFastNewsEntity.getGood()+1);
+        busFastNewsService.update(busFastNewsEntity);
+        xr.setObject(busFastNewsEntity);
+        return xr;
+    }
+
+    /**
+     * 快报利空
+     */
+    @PostMapping("addbad")
+    @ApiOperation(value = "查询所有快报表信息")
+    @IgnoreAuth
+    @ResponseBody
+    public XaResult<BusFastNewsEntity> addbad(
+            @ApiParam("快报id") @RequestParam(defaultValue = "0") Integer id,
+            HttpServletRequest request
+    ) {
+        XaResult<BusFastNewsEntity> xr = new XaResult<>();
+        if(id==0){return xr;}
+        BusFastNewsEntity busFastNewsEntity = busFastNewsService.queryObject(id);
+        busFastNewsEntity.setBad(busFastNewsEntity.getBad()+1);
+        busFastNewsService.update(busFastNewsEntity);
+        xr.setObject(busFastNewsEntity);
+        return xr;
+    }
 }

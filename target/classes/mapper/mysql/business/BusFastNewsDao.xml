@@ -18,6 +18,8 @@
                     <result property="fastnewsRemarks1" column="fastnews_remarks1"/>
                     <result property="fastnewsRemarks2" column="fastnews_remarks2"/>
                     <result property="fastnewsRemarks3" column="fastnews_remarks3"/>
+                    <result property="good" column="good"/>
+                    <result property="bad" column="bad"/>
             </resultMap>
 
     <select id="queryObject" resultType="com.ourslook.guower.entity.business.BusFastNewsEntity">
@@ -145,7 +147,10 @@
                                                                                 look_times , 
                                                                                 fastnews_remarks1 , 
                                                                                 fastnews_remarks2 , 
-                                                                                fastnews_remarks3 
+                                                                                fastnews_remarks3 ,
+                                                                                good,
+                                                                                bad
+
                                                 )
         VALUES
         (
@@ -161,7 +166,9 @@
                                                             #{lookTimes}, 
                                                             #{fastnewsRemarks1}, 
                                                             #{fastnewsRemarks2}, 
-                                                            #{fastnewsRemarks3}
+                                                            #{fastnewsRemarks3},
+                                                            #{good},
+                                                            #{bad}
                                     )
     </insert>
 
@@ -186,6 +193,10 @@
                         `is_news_flash` = #{isNewsFlash}, </if>
                                                                 <if test="lookTimes != null">
                         `look_times` = #{lookTimes}, </if>
+            <if test="good != null">
+                `good` = #{good}, </if>
+            <if test="bad != null">
+                `bad` = #{bad}, </if>
                                                                 <if test="fastnewsRemarks1 != null">
                         `fastnews_remarks1` = #{fastnewsRemarks1}, </if>
                                                                 <if test="fastnewsRemarks2 != null">
