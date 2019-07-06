@@ -1,5 +1,6 @@
 package com.ourslook.guower;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
@@ -9,7 +10,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  *
  * mvn clean install ： 安装
  * mvn clean test : 测试
- * mvn clean deploy： 部署
+ * mvn cleamvnn deploy： 部署
  *
  * 打包步骤：
  * 1：打包 mvn clean package  -Dmaven.test.skip=true
@@ -27,7 +28,7 @@ public class TomcatApplication extends SpringBootServletInitializer {
         return application.sources(TomcatApplication.class);
     }
 
-   /* public static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(com.ourslook.guower.TomcatApplication.class, args);
-    }*/
+    }
 }
