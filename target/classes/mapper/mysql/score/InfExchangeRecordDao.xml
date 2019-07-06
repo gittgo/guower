@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.score.InfExchangeRecordDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.score.InfExchangeRecordEntity" id="infExchangeRecordMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="currencyId" column="currency_id"/>
+        <result property="score" column="score"/>
+        <result property="createDate" column="create_date"/>
+        <result property="purseAddress" column="purse_address"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.score.InfExchangeRecordEntity">
+        SELECT *
+        FROM t_inf_exchange_record where id = #{value}
+    </select>
+
+    <select id="queryVoList" resultType="com.ourslook.guower.vo.score.InfExchangeRecordVo">
+        select t.*,u.`nick_name` as userName,c.`currency_name` as currencyName, c.`image` as currency_img,s.`username` as sysUserName from
+        t_inf_exchange_record t
+        LEFT JOIN t_user u on (u.id = t.user_id)
+        LEFT JOIN t_inf_currency c on (c.id = t.currency_id)
+        LEFT JOIN sys_user s on (s.user_id = t.sys_user_id)
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and t.`id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userId != null and userId.trim() != ''">
+                and t.`user_id` = #{userId}
+            </if>
+            <if test="currencyId != null and currencyId.trim() != ''">
+                and t.`currency_id` = #{currencyId}
+            </if>
+            <if test="score != null and score.trim() != ''">
+                and t.`score` = #{score}
+            </if>
+            <if test="purseAddress != null and purseAddress.trim() != ''">
+                and t.`purse_address` = #{purseAddress}
+            </if>
+            <if test="sysUserId != null and sysUserId.trim() != ''">
+                and t.`sys_user_id` = #{sysUserId}
+            </if>
+            <if test="state != null and state.trim() != ''">
+                and t.`state` = #{state}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and t.`create_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by t.${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.create_date desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryList" resultType="com.ourslook.guower.entity.score.InfExchangeRecordEntity">
+        select * from t_inf_exchange_record
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userId != null and userId.trim() != ''">
+                and `user_id` = #{userId}
+            </if>
+            <if test="currencyId != null and currencyId.trim() != ''">
+                and `currency_id` = #{currencyId}
+            </if>
+            <if test="score != null and score.trim() != ''">
+                and `score` = #{score}
+            </if>
+            <if test="purseAddress != null and purseAddress.trim() != ''">
+                and `purse_address` = #{purseAddress}
+            </if>
+            <if test="sysUserId != null and sysUserId.trim() != ''">
+                and `sys_user_id` = #{sysUserId}
+            </if>
+            <if test="state != null and state.trim() != ''">
+                and `state` = #{state}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and `create_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_inf_exchange_record
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userId != null and userId.trim() != ''">
+                and `user_id` = #{userId}
+            </if>
+            <if test="currencyId != null and currencyId.trim() != ''">
+                and `currency_id` = #{currencyId}
+            </if>
+            <if test="score != null and score.trim() != ''">
+                and `score` = #{score}
+            </if>
+            <if test="purseAddress != null and purseAddress.trim() != ''">
+                and `purse_address` = #{purseAddress}
+            </if>
+            <if test="sysUserId != null and sysUserId.trim() != ''">
+                and `sys_user_id` = #{sysUserId}
+            </if>
+            <if test="state != null and state.trim() != ''">
+                and `state` = #{state}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and `create_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.score.InfExchangeRecordEntity">
+        INSERT INTO t_inf_exchange_record
+            (
+                                                            id , 
+                                                                                user_id , 
+                                                                                currency_id , 
+                                                                                score , 
+                                                                                create_date , 
+                                                                                purse_address , 
+                                                                                sys_user_id , 
+                                                                                state 
+                                                )
+        VALUES
+        (
+                                            #{id}, 
+                                                            #{userId}, 
+                                                            #{currencyId}, 
+                                                            #{score}, 
+                                                            #{createDate}, 
+                                                            #{purseAddress}, 
+                                                            #{sysUserId}, 
+                                                            #{state}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.score.InfExchangeRecordEntity">
+        update t_inf_exchange_record
+        <set>
+            <if test="userId != null">
+                `user_id` = #{userId},
+            </if>
+            <if test="currencyId != null">
+                `currency_id` = #{currencyId},
+            </if>
+            <if test="score != null">
+                `score` = #{score},
+            </if>
+            <if test="createDate != null">
+                `create_date` = #{createDate},
+            </if>
+            <if test="purseAddress != null">
+                `purse_address` = #{purseAddress},
+            </if>
+            <if test="sysUserId != null">
+                `sys_user_id` = #{sysUserId},
+            </if>
+            <if test="state != null">
+                `state` = #{state}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_inf_exchange_record where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from t_inf_exchange_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="grant">
+        update t_inf_exchange_record
+        <set>
+            <if test="sysUserId != null">
+                `sys_user_id` = #{sysUserId},
+            </if>
+            <if test="state != null">
+                `state` = #{state}
+            </if>
+        </set>
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

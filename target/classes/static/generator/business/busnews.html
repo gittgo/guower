@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>新闻文章表</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../public/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../public/plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../public/css/main.css">
+<script src="../../public/libs/jquery.min.js"></script>
+
+<script src="../../public/plugins/layui/layui.js"></script>
+<link  href="../../public/plugins/layui/css/layui.css"  media="all" rel="stylesheet">
+<script src="../../public/libs/bootstrap.min.js"></script>
+<script src="../../public/libs/vue.min.js"></script>
+<script src="../../public/plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+<!--工具相关-->
+<script src="../../public/plugins/accounting.min.js"></script>
+<script src="../../public/plugins/date_fns.min.js"></script>
+<script src="../../public/plugins/moment.min.js"></script>
+<script src="../../public/plugins/lodash.min.js"></script>
+<script src="../../public/plugins/sortable.min.js"></script>
+<script src="../../public/js/common.js"></script>
+<script src="../../public/js/ajaxfileupload.js"></script>
+	<script>
+        upload("news");
+	</script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList == 1">
+		<div class="grid-btn">
+			<div class="form-group col-sm-2">
+				<input readonly="readonly" id="createDate_BETWEEN" type="text" class="form-control" v-model="q.createDate_BETWEEN" @keyup.enter="query" placeholder="发布时间">
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="newsType" class="form-control" v-model="q.newsType"  @change="query">
+					<option value="">请选择文章类型</option>
+					<option v-for="option in newsTypeList" :value="option.remarks">
+						{{ option.name }}
+					</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select class="form-control selectpicker" id="selectUser" v-model="q.author" @change="query"
+						placeholder="请选择作者" data-live-search="true">
+					<option value="" selected>请选择作者</option>
+					<!--<option v-for="option in dicCompany" :value="option.id">{{option.name}}</option>-->
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="releaseType" class="form-control" v-model="q.releaseType"  @change="query">
+					<option value="">请选择发布类型</option>
+					<option value="1">后台</option>
+					<option value="2">作者</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select class="form-control selectpicker" id="selectSysUser" v-model="q.releaseUserId" @change="query"
+						placeholder="请选择发布人" data-live-search="true">
+					<option value="" selected>请选择发布人</option>
+					<!--<option v-for="option in dicCompany" :value="option.id">{{option.name}}</option>-->
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="isAdvertisement" class="form-control" v-model="q.isAdvertisement"  @change="query">
+					<option value="">请选择是否为广告</option>
+					<option value="1">是</option>
+					<option value="0">否</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="isHotspot" class="form-control" v-model="q.isHotspot"  @change="query">
+					<option value="">请选择是否为热点</option>
+					<option value="1">是</option>
+					<option value="0">否</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="examineType" class="form-control" v-model="q.examineType"  @change="query">
+					<option value="">请选择审核类型</option>
+					<option value="0">审核中</option>
+					<option value="1">已通过</option>
+					<option value="2">未通过</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="isRelease" class="form-control" v-model="q.isRelease"  @change="query">
+					<option value="">请选择发布状态</option>
+					<option value="1">已发布</option>
+					<option value="0">未发布</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="tag" class="form-control" v-model="q.tag" @change="query">
+					<option value="">请选择文章标签</option>
+					<option value="0">无标签</option>
+					<option value="1">HOT</option>
+					<option value="2">NEW</option>
+				</select>
+			</div>
+            <!-- 如果操作非常少，2-3个就可以去掉 外面的div;否则请保留 -->
+            <div class="form-group col-sm-12">
+                <a class="btn btn-primary btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <!--<a v-if="hasPermission('busnews:info')" class="btn btn-primary btn-sm" @click="info"><i class="fa fa-info-circle"></i>&nbsp;查看</a>-->
+                <!--<a v-if="hasPermission('busnews:update')" class="btn btn-primary btn-sm" @click="operateByIds(1)"><i class="fa fa-arrow-circle-up"></i>&nbsp;发布</a>-->
+                <!--<a v-if="hasPermission('busnews:update')" class="btn btn-primary btn-sm" @click="operateByIds(2)"><i class="fa fa-check-square"></i>&nbsp;启用</a>-->
+                <!--<a v-if="hasPermission('busnews:update')" class="btn btn-primary btn-sm" @click="operateByIds(-1)"><i class="fa fa-times-circle"></i>&nbsp;禁用</a>&ndash;&gt;-->
+
+                <a v-if="hasPermission('busnews:save')" class="btn btn-primary btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+                <a v-if="hasPermission('busnews:update')" class="btn btn-primary btn-sm" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+                <!--没有确定好的模块不要加删除； 没有业务的可以真删除；有业务必须是逻辑删除；-->
+                 <a v-if="hasPermission('busnews:delete')" class="btn btn-primary btn-sm" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</div>
+		</div>
+        <!-- <div class="col-sm-12" v-if="hasPermission('busnews:list')" >
+            <hr class="layui-bg-gray">
+            <div>
+                下载数据:
+                <a class="btn btn-link btn-sm" @click="exportsAllToExcel(false)"><i class="fa fa-file-excel-o"></i>&nbsp;Excel格式</a>
+                <a class="btn btn-link btn-sm" @click="exportsAllToExcel(true)"><i class="fa fa-file-text"></i>&nbsp;Csv格式</a>
+            </div>
+        </div>-->
+        <div class="form-group col-sm-12">
+            <!-- 列表table-->
+			<table  class="layui-hide" id="jqGrid" lay-filter="jqGridFilter"></table>
+        </div>
+    </div>
+
+    <!-- 新增、编辑-->
+    <div v-show="showList == 0" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form id="addOrUpdateForm" class="form-horizontal col-md-12" style="width: 100%;margin:auto">
+            <!--注意添加的时候各个字段的类型，整形、浮点型、手机号、邮箱、电话号、身份证、时间格式先后顺序大小、排序类型、唯一remote、 等常规的东西都要验证；各种必填非必填请多动脑子思考
+            🚫🚫🚫🚫🚫禁止偷懒，否则到测试手里就各种bug、各种系统异常
+            https://blog.csdn.net/postersxu/article/details/79304429
+            如：非负整数、排序： Integer（+0）;int_0_10000;  <input type="number" min="0" max="999999"
+            电话：tel
+            手机号：mobile
+            身份证：IDcard
+            中文字符：chinese
+            身份证：IDcard
+            double保留4位小数：money_0_9999999999999999
+            远程校验：remote
+            数字范围校验，不包含边界： range(m~n, false)
+            多选一校验： 如，手机号、电话、邮箱多选一
+            匹配校验，如确认密码、确认日期：date;datetime;match(前一个表单元素的name)、match(gt,第一个日期控件name,第二个日期控件name)
+           	时间控件选择：是否能够选择历史日期等等
+            -->
+											<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;标题</div>
+			   	<div class="col-sm-9">
+			      <input type="text" class="form-control" v-model="busNews.title" placeholder="标题"
+						 :disabled="busNews.releaseType == 2"
+						 data-rule="标题:required;length(~50)"
+                         maxlength="50" />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;副标题</div>
+			   	<div class="col-sm-9">
+					<textarea class="form-control" v-model="busNews.smallTitle" placeholder="副标题"
+							  :disabled="busNews.releaseType == 2"
+							  data-rule="副标题【简介】:required;length(~100)"
+							  maxlength="100"></textarea>
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">大图标</div>
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.image" placeholder="大图标"-->
+						 <!--data-rule="大图标:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+				<div class="col-sm-9">
+					<img id="myImageShow"  class="thumbnail" width="280px" height="180px" src="../../public/image/imgError.jpg"/>
+					<input type="hidden" id="imgUrl" />
+                    <span class="upload_file_parent">
+                        <button type="button" class="layui-btn">
+						    <i class="layui-icon">&#xe67c;</i>上传图片
+					    </button>
+                        <input type="file" id="uploadPhotoFile" name="myfile" class="upload_file" accept="image/*" :disabled="busNews.releaseType == 2">
+                    </span>
+					<span class="upload_file_parent">
+						<button type="button" class="layui-btn layui-btn-danger">
+						    <i class="fa fa-trash-o"></i>&nbsp;删除
+					    </button>
+						<input type="button" class="upload_file_del" :disabled="busNews.releaseType == 2">
+					</span>
+				</div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;小图标</div>
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.smallImage" placeholder="小图标"-->
+						 <!--data-rule="小图标:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+				<div class="col-sm-9">
+					<img id="myImageShow1"  class="thumbnail" width="280px" height="180px" src="../../public/image/imgError.jpg"/>
+					<input type="hidden" id="imgUrl1" />
+					<span class="upload_file_parent">
+                        <button type="button" class="layui-btn">
+						    <i class="layui-icon">&#xe67c;</i>上传图片
+					    </button>
+                        <input type="file" id="uploadPhotoFile1" name="myfile" class="upload_file" accept="image/*" :disabled="busNews.releaseType == 2">
+                    </span>
+					<span class="upload_file_parent">
+						<button type="button" class="layui-btn layui-btn-danger">
+						    <i class="fa fa-trash-o"></i>&nbsp;删除
+					    </button>
+						<input type="button" class="upload_file_del" :disabled="busNews.releaseType == 2">
+					</span>
+				</div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">文章标签</div>
+			   	<div class="col-sm-9">
+					<select name="tag" class="form-control" data-rule="文章标签:required;" v-model="busNews.tag">
+						<option value="0">无标签</option>
+						<option value="1">HOT</option>
+						<option value="2">NEW</option>
+					</select>
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">内容标签1</div>
+			   	<div class="col-sm-9">
+			      <input type="text" class="form-control" v-model="busNews.tag1" placeholder="内容标签1"
+						 :disabled="busNews.releaseType == 2"
+						 data-rule="内容标签1:length(~5);"
+                         maxlength="5" />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">内容标签2</div>
+			   	<div class="col-sm-9">
+			      <input type="text" class="form-control" v-model="busNews.tag2" placeholder="内容标签2"
+						 :disabled="busNews.releaseType == 2"
+						 data-rule="内容标签2:length(~5);"
+                         maxlength="5" />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">内容标签3</div>
+			   	<div class="col-sm-9">
+			      <input type="text" class="form-control" v-model="busNews.tag3" placeholder="内容标签3"
+						 :disabled="busNews.releaseType == 2"
+						 data-rule="内容标签3:length(~5);"
+                         maxlength="5" />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;文章类型</div>
+			   	<div class="col-sm-9">
+					<select name="newsType" class="form-control" v-model="busNews.newsType" data-rule="文章类型:required;" :disabled="busNews.releaseType == 2">
+						<option value="">请选择文章类型</option>
+						<option v-for="option in newsTypeList" :value="option.remarks">
+							{{ option.name }}
+						</option>
+					</select>
+			    </div>
+			</div>
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;阅读量</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.lookTimes" placeholder="阅读量"-->
+						 <!--data-rule="阅读量:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;作者</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.author" placeholder="作者"-->
+						 <!--data-rule="作者:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;责任编辑</div>
+			   	<div class="col-sm-9">
+			      <input type="text" class="form-control" v-model="busNews.responsibleEditor" placeholder="责任编辑"
+						 :disabled="busNews.releaseType == 2"
+						 data-rule="责任编辑:required;length(~10)"
+                         maxlength="10" />
+			    </div>
+			</div>
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;发布类型【1.后台 2.作者】</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.releaseType" placeholder="发布类型【1.后台 2.作者】"-->
+						 <!--data-rule="发布类型【1.后台 2.作者】:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;发布人</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.releaseUserId" placeholder="发布人"-->
+						 <!--data-rule="发布人:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;发布时间</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.releaseDate" placeholder="发布时间"-->
+						 <!--data-rule="发布时间:required;                          "-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">是否为广告</div>
+			   	<div class="col-sm-9">
+					<select name="isAdvertisement" class="form-control" data-rule="是否为广告:required;" v-model="busNews.isAdvertisement">
+						<option value="0">非广告</option>
+						<option value="1">广告</option>
+					</select>
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">是否上热点</div>
+			   	<div class="col-sm-9">
+					<select name="isHotspot" class="form-control" data-rule="是否上热点:required;" v-model="busNews.isHotspot">
+						<option value="0">非热点</option>
+						<option value="1">热点</option>
+					</select>
+			    </div>
+			</div>
+			<div class="form-group  col-md-12">
+				<div class="col-sm-2 control-label" style="width: 12.2%;"><span class="require">*</span>&nbsp;正文</div>
+				<div class="col-sm-10" style="width: 87.8%;padding-left: 15px;">
+						<div id="ueditor" name="content" v-model="busNews.mainText" placeholder="正文"
+							 style="width:100%;height:300px;"></div>
+						<div id="readOnlyUeditor" name="content" v-model="busNews.mainText" placeholder="正文" hidden="hidden"
+							 style="width:100%;height:300px;"></div>
+				</div>
+			</div>
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;暂留</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.isRelease" placeholder="暂留"-->
+						 <!--data-rule="暂留:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;暂留</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.newsRemarks2" placeholder="暂留"-->
+						 <!--data-rule="暂留:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;暂留</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.newsRemarks3" placeholder="暂留"-->
+						 <!--data-rule="暂留:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;排序</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.sort" placeholder="排序"-->
+						 <!--data-rule="排序:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;排序到期时间</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.sortTime" placeholder="排序到期时间"-->
+						 <!--data-rule="排序到期时间:required;                          "-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;审核类型【2.未通过 0.审核中 1.通过】</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="busNews.examineType" placeholder="审核类型【2.未通过 0.审核中 1.通过】"-->
+						 <!--data-rule="审核类型【2.未通过 0.审核中 1.通过】:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+							<div class="form-group  col-md-12">
+				<div class="col-sm-5 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="goBack" value="返回"/>
+			</div>
+		</form>
+	</div>
+
+    <!-- 查看详细信息-->
+    <!--
+    <div v-show="showList==2" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form id="viewForm" class="form-horizontal col-md-12" style="width: auto">
+														                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">标题</div>
+                        <div class="col-sm-label">{{busNews.title}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">副标题【简介】</div>
+                        <div class="col-sm-label">{{busNews.smallTitle}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">大图标</div>
+                        <div class="col-sm-label">{{busNews.image}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">小图标</div>
+                        <div class="col-sm-label">{{busNews.smallImage}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">文章标签【2.NEW 1.HOT 0.无标签】</div>
+                        <div class="col-sm-label">{{busNews.tag}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">内容标签1</div>
+                        <div class="col-sm-label">{{busNews.tag1}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">内容标签2</div>
+                        <div class="col-sm-label">{{busNews.tag2}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">内容标签3</div>
+                        <div class="col-sm-label">{{busNews.tag3}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">正文【详情】</div>
+                        <div class="col-sm-label">{{busNews.mainText}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">文章类型</div>
+                        <div class="col-sm-label">{{busNews.newsType}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">阅读量</div>
+                        <div class="col-sm-label">{{busNews.lookTimes}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">作者</div>
+                        <div class="col-sm-label">{{busNews.author}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">责任编辑</div>
+                        <div class="col-sm-label">{{busNews.responsibleEditor}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">发布类型【1.后台 2.作者】</div>
+                        <div class="col-sm-label">{{busNews.releaseType}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">发布人</div>
+                        <div class="col-sm-label">{{busNews.releaseUserId}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">发布时间</div>
+                        <div class="col-sm-label">{{busNews.releaseDate}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">是否为广告【1.广告  0.非广告】</div>
+                        <div class="col-sm-label">{{busNews.isAdvertisement}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">是否上热点【1.热点  0.非热点】</div>
+                        <div class="col-sm-label">{{busNews.isHotspot}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">暂留</div>
+                        <div class="col-sm-label">{{busNews.isRelease}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">暂留</div>
+                        <div class="col-sm-label">{{busNews.newsRemarks2}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">暂留</div>
+                        <div class="col-sm-label">{{busNews.newsRemarks3}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">排序</div>
+                        <div class="col-sm-label">{{busNews.sort}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">排序到期时间</div>
+                        <div class="col-sm-label">{{busNews.sortTime}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">审核类型【2.未通过 0.审核中 1.通过】</div>
+                        <div class="col-sm-label">{{busNews.examineType}}</div>
+                    </div>
+							            <div class="form-group  col-md-12">
+                <div class="col-sm-5 control-label"></div>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="goBack" value="返回"/>
+            </div>
+        </form>
+    </div>
+	-->
+
+</div>
+
+<!--nice validator-->
+<link  href="../../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/nice-validator/jquery.validator.min.js" type="text/javascript"></script>
+<script src="../../public/plugins/nice-validator/local/zh-CN.js" type="text/javascript"></script>
+<script src="../../public/js/common.js"></script>
+<!-- datepicker  时间段使用laydate -->
+<!-- datepicker  普通时间酌情使用 -->
+<!--
+<link  href="../../public/plugins/bootstrap-datepicker/datepicker.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
+<link  href="../../public/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+-->
+
+<!-- bootstrap-select |  bootstrap-multiselect https://www.cnblogs.com/landeanfen/p/7457283.html | vue-multiselect.  -->
+<!--<link href="../../public/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" type="text/css"/>-->
+<!--<script src="../../public/plugins/bootstrap-select/js/bootstrap-select-multiple.js" type="text/javascript"></script>-->
+
+<!--boostrap-fileupload http://plugins.krajee.com/file-input/demo  || vue-dropzone https://rowanwins.github.io/vue-dropzone/  || zui uploader plupload -->
+<!--下拉查询框-->
+<link href="../../public/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-select/js/bootstrap-select-multiple.js" type="text/javascript"></script>
+<!--daterangepicker 时间段控件; 如果有使用分段日期控件，请打开-->
+<link rel="stylesheet" type="text/css" media="all" href="../../public/plugins/daterangepicker/daterangepicker.css"/>
+<script type="text/javascript" src="../../public/plugins/daterangepicker/daterangepicker.js"></script>
+<!--baidu ueditor-->
+<script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.custom.ourslook.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../ueditor/lang/zh-cn/zh-cn.js"></script>
+<!--业务相关-->
+<script src="../../public/js/generator/business/busnews.js?v=ourslook00000627_1"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>版本更新</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../../public/plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <script src="../../public/libs/jquery.min.js"></script>
+
+    <script src="../../public/plugins/layui/layui.all.js"></script>
+    <!--<script src="../../public/plugins/layui/css/layui.css"></script>-->
+    <link href="../../public/plugins/layui/css/layui.css" rel="stylesheet" />
+    <script src="../../public/libs/bootstrap.min.js"></script>
+    <script src="../../public/libs/vue.min.js"></script>
+    <script src="../../public/plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+    <!--工具插件-->
+    <script src="../../public/plugins/accounting.min.js"></script>
+    <script src="../../public/plugins/date_fns.min.js"></script>
+    <script src="../../public/plugins/lodash.min.js"></script>
+    <script src="../../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <!-- 查询条件根据需要打开 -->
+            <div class="form-group col-sm-2">
+                <a v-if="hasPermission('infversioninfo:update')" class="btn btn-primary btn-sm" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <table id="jqGrid"></table>
+            <div id="jqGridPager"></div>
+        </div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form id="addOrUpdateForm" class="form-horizontal col-md-12" style="width: auto">
+            <div class="form-group  col-md-6">
+                <div class="col-sm-2 control-label"><span class="require">*</span>版本代码</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="infVersionInfo.versioncode" placeholder="版本代码，如：15"
+                           data-rule="版本代码:required;integer(+0)"/>
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-2 control-label"><span class="require">*</span>版本名称</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="infVersionInfo.versionname"
+                           placeholder="版本名称,如:2.1.0,后面两位数字不要超过9"
+                           data-rule="版本名称:required;length(0~100)" maxlength="100"/>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="col-sm-2 control-label">更新平台</div>
+                <div class="col-sm-10">
+                    <select name="device" class="form-control" v-model="infVersionInfo.device">
+                        <option value="1">IOS</option>
+                        <!--<option value="11">IOS2</option>-->
+                        <option value="2">ANDROID</option>
+                        <!--<option value="22">ANDROID2</option>-->
+                        <!--<option value="3">WEB</option>-->
+                    </select>
+                </div>
+            </div>
+            <div style="float: left" class="form-group  col-md-6">
+                <div class="col-sm-2 control-label">是否强制更新</div>
+                <div class="col-sm-10">
+                    <label class="radio-inline">
+                        <input type="radio" name="isforceupdate" value="0" v-model="infVersionInfo.isforceupdate"/> 否
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="isforceupdate" value="1" v-model="infVersionInfo.isforceupdate"
+                               data-rule="是否强制更新;checked"/> 是
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-12" style="padding:0">
+                <div class="form-group  col-md-6">
+                    <div class="col-sm-2 control-label">更新内容</div>
+                    <div class="col-sm-10">
+						<textarea class="form-control" v-model="infVersionInfo.updatecontent" rows="5" placeholder="版本更新内容说明"
+                                  data-rule="版本更新内容说明:required;length(0~200)" maxlength="200">
+						</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-2 control-label">下载地址</div>
+                <div class="col-sm-10">
+                    <!--excel格式-->
+                    <!--<input type="file" id="filePath" class="form-control" style="display: none"-->
+                           <!--onchange="$('input[id=fileCover]').val($('input[id=filePath]').val());"-->
+                           <!--accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">-->
+                    <!--apk、ipa格式-->
+                    <input type="file" id="filePath" class="form-control" style="display: none"
+                           onchange="$('input[id=fileCover]').val($('input[id=filePath]').val());"  @change="uploadApk"
+                           accept=".apk, .ipa">
+                    <div class="input-group">
+                        <input type="text" id="fileCover" class="form-control" readonly data-rule="模板:required;" v-model="infVersionInfo.downloadurl" placeholder="下载地址"
+                               onclick="$('input[id=filePath]').click();"/>
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-folder-open"
+                                  onclick="$('input[id=filePath]').click();"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-2 control-label">上次更新日期</div>
+                <div class="col-sm-10">
+                    <div class="input-group date" data-provide="datepicker">
+                        <input type="text" id="updateDate" class="form-control"
+                               v-model="infVersionInfo.updateDate" placeholder="yyyy-MM-dd" disabled
+                               data-rule="上次更新日期:date;required;" maxlength="10"/>
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="col-sm-2 control-label">说明</div>
+                <div class="col-sm-10" style="color:blue">
+                    上传文件，android格式是apk、ios格式是ipa,请正确上传指定后缀的文件.
+                </div>
+            </div>
+            <div class="form-horizontal col-md-12">
+                <div class="col-sm-2 control-label">文件下载</div>
+                <div class="col-sm-10">
+                    <a class="btn btn-default fa fa-download" @click="downloadApk">下载app文件</a>
+                </div>
+            </div>
+            <div class="form-group  col-md-12">
+                <div class="col-sm-5 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--业务相关-->
+<script src="../../public/js/generator/common/infversioninfo.js"></script>
+<!--nice validator-->
+<link  href="../../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/nice-validator/jquery.validator.min.js" type="text/javascript"></script>
+<script src="../../public/plugins/nice-validator/local/zh-CN.js" type="text/javascript"></script>
+<script src="../../public/js/common.js"></script>
+</body>
+</html>

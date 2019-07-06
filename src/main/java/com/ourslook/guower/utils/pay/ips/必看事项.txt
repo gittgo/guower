@@ -1,0 +1,22 @@
+
+
+注意！注意！
+
+1，demo v0.2 仅供参考，具体接口开发，请按照接口文档要求结合网站进行。
+
+2，由于目前暂无测试环境，demo中的商户号信息和提交地址都无法使用，运行demo时，请把demo中配置文件中的的提交URL，商户证书，ips公钥，商户号，和sinopay.jsp页面上的商户号和商户账户号，都改成正式的。
+
+#URL    //正式环境地址：https://newpay.ips.com.cn/psfp-entry/gateway/payment.do
+formAction=http://192.168.23.35:8002/psfp-entry/gateway/payment.do
+
+#商户证书   //该证书下载步骤：商户后台-->商户设置-->商户服务-->MD5证书--> 下载（注：如是第一次下载此证书，请先点击生成，然后再点击下载）
+directStr=kQV7XUGCg55XMS9nR8mhNE4nXLLWjYlFOtaP7tWNwhP8gVky4nwOMk7naZHD3XGEuPjRr7yLlK4uEeXvCjBsKWK02r18K115kFq7r3URdl8W6owwFtPlBYgfKOFLZNUq
+
+#ips公钥   //【替换此公钥时需注意为一长串，实际空行的地方需加上\n】该证书下载步骤：商户后台-->商户设置-->商户服务-->rsa公钥--> 下载（注：如是第一次下载此证书，请先点击生成，然后再点击下载）
+ipsRsaPub=-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbfyYdw2j5gOF7X9cdFrUKJ+MR\nTAfpJB+opBxjSw7iAZNUv9TmQHH/LSAim2ucaBRiB/Cqm1agocip3g8YC7Md/AhC\ntN+di0uc3d0F2c7H/WZm4n98IPjwfjmxNUJxdvKnF3CezY9nCCHWu36NvtMlCKLl\nO14Iu/PNvsVVv85zowIDAQAB\n-----END PUBLIC KEY-----
+
+# 商户号(ips为商户开通的6位数号码，用来做验签，需与页面上传输的商户号保持一致)
+merCode=218337
+
+
+商户账户号： //登录商户后台-->账户管理-->账户资料-->交易账户-->交易账号

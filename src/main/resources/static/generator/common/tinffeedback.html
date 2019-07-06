@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>意见查看</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../../public/plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <script src="../../public/libs/jquery.min.js"></script>
+
+    <script src="../../public/plugins/layui/layui.all.js"></script>
+    <script src="../../public/plugins/layui/css/layui.css"></script>
+    <script src="../../public/libs/bootstrap.min.js"></script>
+    <script src="../../public/libs/vue.min.js"></script>
+    <script src="../../public/plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+    <!--工具插件-->
+    <script src="../../public/plugins/accounting.min.js"></script>
+    <script src="../../public/plugins/date_fns.min.js"></script>
+    <script src="../../public/plugins/lodash.min.js"></script>
+    <script src="../../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <!-- 查询条件根据需要打开 -->
+            <!-- <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.username" @keyup.enter="query" placeholder="用户名">
+            </div>
+            <a class="btn btn-default" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a> -->
+            <a v-if="hasPermission('tinffeedback:save')"   class="btn btn-primary btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+            <a v-if="hasPermission('tinffeedback:update')" class="btn btn-primary btn-sm" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+            <a v-if="hasPermission('tinffeedback:delete')" class="btn btn-primary btn-sm" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form id="addOrUpdateForm" class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-2 control-label"><span class="require">*</span>反馈用户Id</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfFeedback.feedbackuserid" placeholder="反馈用户Id"
+                           data-rule="反馈用户Id: required; "/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"><span class="require">*</span>反馈内容</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfFeedback.feedbackcontent" placeholder="反馈内容"
+                           data-rule="反馈内容: required; length(0~1000)"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../../public/js/generator/common/tinffeedback.js"></script>
+<!--nice validator-->
+<link href="../../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/nice-validator/jquery.validator.min.js"></script>
+<script src="../../public/plugins/nice-validator/local/zh-CN.js"></script>
+</body>
+</html>

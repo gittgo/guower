@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.business.BusFastNewsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.business.BusFastNewsEntity" id="busFastNewsMap">
+                    <result property="id" column="id"/>
+                    <result property="title" column="title"/>
+                    <result property="mainText" column="main_text"/>
+                    <result property="releaseUserId" column="release_user_id"/>
+                    <result property="releaseDate" column="release_date"/>
+                    <result property="sort" column="sort"/>
+                    <result property="sortTime" column="sort_time"/>
+                    <result property="guowerIndex" column="guower_index"/>
+                    <result property="isNewsFlash" column="is_news_flash"/>
+                    <result property="lookTimes" column="look_times"/>
+                    <result property="fastnewsRemarks1" column="fastnews_remarks1"/>
+                    <result property="fastnewsRemarks2" column="fastnews_remarks2"/>
+                    <result property="fastnewsRemarks3" column="fastnews_remarks3"/>
+            </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.business.BusFastNewsEntity">
+        select t.*,s.username as releaseUserName from t_bus_fast_news t
+        LEFT JOIN sys_user s on (s.user_id = t.release_user_id)
+        where t.id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.ourslook.guower.entity.business.BusFastNewsEntity">
+        select t.*,s.username as releaseUserName from t_bus_fast_news t
+        LEFT JOIN sys_user s on (s.user_id = t.release_user_id)
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and t.`id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and t.`title` like concat('%',#{title},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and t.`main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and t.`release_user_id` = #{releaseUserId}
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and t.`sort` = #{sort}
+            </if>
+            <if test="guowerIndex != null and guowerIndex.trim() != ''">
+                and t.`guower_index` = #{guowerIndex}
+            </if>
+            <if test="isNewsFlash != null and isNewsFlash.trim() != ''">
+                and t.`is_news_flash` = #{isNewsFlash}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and t.`look_times` = #{lookTimes}
+            </if>
+            <if test="fastnewsRemarks1 != null and fastnewsRemarks1.trim() != ''">
+                and t.`fastnews_remarks1` like concat('%',#{fastnewsRemarks1},'%')
+            </if>
+            <if test="fastnewsRemarks2 != null and fastnewsRemarks2.trim() != ''">
+                and t.`fastnews_remarks2` like concat('%',#{fastnewsRemarks2},'%')
+            </if>
+            <if test="fastnewsRemarks3 != null and fastnewsRemarks3.trim() != ''">
+                and t.`fastnews_remarks3` like concat('%',#{fastnewsRemarks3},'%')
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and t.`release_date`  BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by t.${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.release_date desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_bus_fast_news
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and `title` like concat('%',#{title},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and `main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and `release_user_id` = #{releaseUserId}
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and `sort` = #{sort}
+            </if>
+            <if test="guowerIndex != null and guowerIndex.trim() != ''">
+                and `guower_index` = #{guowerIndex}
+            </if>
+            <if test="isNewsFlash != null and isNewsFlash.trim() != ''">
+                and `is_news_flash` = #{isNewsFlash}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and `look_times` = #{lookTimes}
+            </if>
+            <if test="fastnewsRemarks1 != null and fastnewsRemarks1.trim() != ''">
+                and `fastnews_remarks1` like concat('%',#{fastnewsRemarks1},'%')
+            </if>
+            <if test="fastnewsRemarks2 != null and fastnewsRemarks2.trim() != ''">
+                and `fastnews_remarks2` like concat('%',#{fastnewsRemarks2},'%')
+            </if>
+            <if test="fastnewsRemarks3 != null and fastnewsRemarks3.trim() != ''">
+                and `fastnews_remarks3` like concat('%',#{fastnewsRemarks3},'%')
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and `release_date`  BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.business.BusFastNewsEntity">
+        INSERT INTO t_bus_fast_news
+            (
+                                                            id , 
+                                                                                title , 
+                                                                                main_text , 
+                                                                                release_user_id , 
+                                                                                release_date , 
+                                                                                sort , 
+                                                                                sort_time , 
+                                                                                guower_index , 
+                                                                                is_news_flash , 
+                                                                                look_times , 
+                                                                                fastnews_remarks1 , 
+                                                                                fastnews_remarks2 , 
+                                                                                fastnews_remarks3 
+                                                )
+        VALUES
+        (
+                                            #{id}, 
+                                                            #{title}, 
+                                                            #{mainText}, 
+                                                            #{releaseUserId}, 
+                                                            #{releaseDate}, 
+                                                            #{sort}, 
+                                                            #{sortTime}, 
+                                                            #{guowerIndex}, 
+                                                            #{isNewsFlash}, 
+                                                            #{lookTimes}, 
+                                                            #{fastnewsRemarks1}, 
+                                                            #{fastnewsRemarks2}, 
+                                                            #{fastnewsRemarks3}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.business.BusFastNewsEntity">
+        update t_bus_fast_news
+        <set>
+                                                                            <if test="title != null">
+                        `title` = #{title}, </if>
+                                                                <if test="mainText != null">
+                        `main_text` = #{mainText}, </if>
+                                                                <if test="releaseUserId != null">
+                        `release_user_id` = #{releaseUserId}, </if>
+                                                                <if test="releaseDate != null">
+                        `release_date` = #{releaseDate}, </if>
+                                                                <if test="sort != null">
+                        `sort` = #{sort}, </if>
+                                                                <if test="sortTime != null">
+                        `sort_time` = #{sortTime}, </if>
+                                                                <if test="guowerIndex != null">
+                        `guower_index` = #{guowerIndex}, </if>
+                                                                <if test="isNewsFlash != null">
+                        `is_news_flash` = #{isNewsFlash}, </if>
+                                                                <if test="lookTimes != null">
+                        `look_times` = #{lookTimes}, </if>
+                                                                <if test="fastnewsRemarks1 != null">
+                        `fastnews_remarks1` = #{fastnewsRemarks1}, </if>
+                                                                <if test="fastnewsRemarks2 != null">
+                        `fastnews_remarks2` = #{fastnewsRemarks2}, </if>
+                                                                <if test="fastnewsRemarks3 != null">
+                        `fastnews_remarks3` = #{fastnewsRemarks3}</if>
+                                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_bus_fast_news where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from t_bus_fast_news where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

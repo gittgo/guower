@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.common.InfVersionInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.common.InfVersionInfoEntity" id="infVersionInfoMap">
+        <result property="id" column="id"/>
+        <result property="versioncode" column="versionCode"/>
+        <result property="versionname" column="versionName"/>
+        <result property="isforceupdate" column="isforceUpdate"/>
+        <result property="updatecontent" column="updateContent"/>
+        <result property="downloadurl" column="downloadUrl"/>
+        <result property="createtime" column="createTime"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createuser" column="createUser"/>
+        <result property="device" column="device"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.common.InfVersionInfoEntity">
+		select * from t_inf_version_info where id = #{value}
+	</select>
+
+    <select id="queryNewObject" resultType="com.ourslook.guower.entity.common.InfVersionInfoEntity">
+		select * from t_inf_version_info where device = #{value} ORDER BY createTime DESC limit 1
+	</select>
+
+    <select id="queryVoList" resultType="com.ourslook.guower.vo.InfVersionInfoVo">
+        select t.*,s.username from t_inf_version_info t,sys_user s where t.createUser = s.user_id
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and `t.id` like concat('%',#{id},'%')
+            </if>
+            <if test="versioncode != null and versioncode.trim() != ''">
+                and `t.versionCode` like concat('%',#{versioncode},'%')
+            </if>
+            <if test="versionname != null and versionname.trim() != ''">
+                and `t.versionName` like concat('%',#{versionname},'%')
+            </if>
+            <if test="isforceupdate != null and isforceupdate.trim() != ''">
+                and `t.isforceUpdate` like concat('%',#{isforceupdate},'%')
+            </if>
+            <if test="updatecontent != null and updatecontent.trim() != ''">
+                and `t.updateContent` like concat('%',#{updatecontent},'%')
+            </if>
+            <if test="downloadurl != null and downloadurl.trim() != ''">
+                and `t.downloadUrl` like concat('%',#{downloadurl},'%')
+            </if>
+            <if test="createtime != null and createtime.trim() != ''">
+                and `t.createTime` like concat('%',#{createtime},'%')
+            </if>
+            <if test="updateDate != null and updateDate.trim() != ''">
+                and `t.update_date` like concat('%',#{updateDate},'%')
+            </if>
+            <if test="createuser != null and createuser.trim() != ''">
+                and `t.createUser` like concat('%',#{createuser},'%')
+            </if>
+            <if test="device != null and device.trim() != ''">
+                and `t.device` like concat('%',#{device},'%')
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryList" resultType="com.ourslook.guower.entity.common.InfVersionInfoEntity">
+        select * from t_inf_version_info
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and `id` like concat('%',#{id},'%')
+            </if>
+            <if test="versioncode != null and versioncode.trim() != ''">
+                and `versionCode` like concat('%',#{versioncode},'%')
+            </if>
+            <if test="versionname != null and versionname.trim() != ''">
+                and `versionName` like concat('%',#{versionname},'%')
+            </if>
+            <if test="isforceupdate != null and isforceupdate.trim() != ''">
+                and `isforceUpdate` like concat('%',#{isforceupdate},'%')
+            </if>
+            <if test="updatecontent != null and updatecontent.trim() != ''">
+                and `updateContent` like concat('%',#{updatecontent},'%')
+            </if>
+            <if test="downloadurl != null and downloadurl.trim() != ''">
+                and `downloadUrl` like concat('%',#{downloadurl},'%')
+            </if>
+            <if test="createtime != null and createtime.trim() != ''">
+                and `createTime` like concat('%',#{createtime},'%')
+            </if>
+            <if test="updateDate != null and updateDate.trim() != ''">
+                and `t.update_date` like concat('%',#{updateDate},'%')
+            </if>
+            <if test="createuser != null and createuser.trim() != ''">
+                and `createUser` like concat('%',#{createuser},'%')
+            </if>
+            <if test="device != null and device.trim() != ''">
+                and `device` like concat('%',#{device},'%')
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_inf_version_info
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and `id` like concat('%',#{id},'%')
+            </if>
+            <if test="versioncode != null and versioncode.trim() != ''">
+                and `versionCode` like concat('%',#{versioncode},'%')
+            </if>
+            <if test="versionname != null and versionname.trim() != ''">
+                and `versionName` like concat('%',#{versionname},'%')
+            </if>
+            <if test="isforceupdate != null and isforceupdate.trim() != ''">
+                and `isforceUpdate` like concat('%',#{isforceupdate},'%')
+            </if>
+            <if test="updatecontent != null and updatecontent.trim() != ''">
+                and `updateContent` like concat('%',#{updatecontent},'%')
+            </if>
+            <if test="downloadurl != null and downloadurl.trim() != ''">
+                and `downloadUrl` like concat('%',#{downloadurl},'%')
+            </if>
+            <if test="createtime != null and createtime.trim() != ''">
+                and `createTime` like concat('%',#{createtime},'%')
+            </if>
+            <if test="updateDate != null and updateDate.trim() != ''">
+                and `t.update_date` like concat('%',#{updateDate},'%')
+            </if>
+            <if test="createuser != null and createuser.trim() != ''">
+                and `createUser` like concat('%',#{createuser},'%')
+            </if>
+            <if test="device != null and device.trim() != ''">
+                and `device` like concat('%',#{device},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.common.InfVersionInfoEntity">
+		insert into t_inf_version_info
+		(
+			`versionCode`, 
+			`versionName`, 
+			`isforceUpdate`, 
+			`updateContent`, 
+			`downloadUrl`, 
+			`createTime`, 
+			`update_date`,
+			`createUser`,
+			`device`
+		)
+		values
+		(
+			#{versioncode}, 
+			#{versionname}, 
+			#{isforceupdate}, 
+			#{updatecontent}, 
+			#{downloadurl}, 
+			#{createtime}, 
+			#{updateDate},
+			#{createuser},
+			#{device}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.common.InfVersionInfoEntity">
+        update t_inf_version_info
+        <set>
+            <if test="versioncode != null">`versionCode` = #{versioncode},</if>
+            <if test="versionname != null">`versionName` = #{versionname},</if>
+            <if test="isforceupdate != null">`isforceUpdate` = #{isforceupdate},</if>
+            <if test="updatecontent != null">`updateContent` = #{updatecontent},</if>
+            <if test="downloadurl != null">`downloadUrl` = #{downloadurl},</if>
+            <if test="createtime != null">`createTime` = #{createtime},</if>
+            <if test="updateDate != null">`update_date` = #{updateDate},</if>
+            <if test="createuser != null">`createUser` = #{createuser},</if>
+            <if test="device != null">`device` = #{device}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from t_inf_version_info where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from t_inf_version_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

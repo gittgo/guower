@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>微博授权</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../public/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../public/plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../public/css/main.css">
+<script src="../../public/libs/jquery.min.js"></script>
+
+<script src="../../public/plugins/layui/layui.js"></script>
+<link  href="../../public/plugins/layui/css/layui.css"  media="all" rel="stylesheet">
+<script src="../../public/libs/bootstrap.min.js"></script>
+<script src="../../public/libs/vue.min.js"></script>
+<script src="../../public/plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+<!--工具相关-->
+<script src="../../public/plugins/accounting.min.js"></script>
+<script src="../../public/plugins/date_fns.min.js"></script>
+<script src="../../public/plugins/moment.min.js"></script>
+<script src="../../public/plugins/lodash.min.js"></script>
+<script src="../../public/plugins/sortable.min.js"></script>
+<script src="../../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp">
+    <div class="panel panel-default">
+        <div class="panel-heading">微博授权</div>
+        <form class="form-horizontal col-md-12" style="width: 100%;margin:auto">
+            <div class="form-group  col-md-12">
+                <div class="col-sm-3 control-label">当前用户</div>
+                <div class="col-sm-9">
+                    <input readonly="readonly" id="userName" type="text" class="form-control" placeholder="当前用户"/>
+                </div>
+            </div>
+            <div class="form-group  col-md-12">
+                <div class="col-sm-3 control-label">授权剩余时间(秒)</div>
+                <div class="col-sm-9">
+                    <input readonly="readonly" id="tokenOverTime" type="text" class="form-control" placeholder="授权剩余时间"/>
+                </div>
+            </div>
+            <div class="form-group  col-md-12">
+                <div class="col-sm-5 control-label"></div>
+                <input type="button" class="btn btn-primary" onclick="javascript:(window.location = 'https://api.weibo.com/oauth2/authorize?client_id=3689934678&redirect_uri=http://chijun.xin/guower/api/weibo/checkCode');"  value="重新授权"/>
+                <!--&nbsp;&nbsp;<input type="button" class="btn btn-warning" value="返回"/>-->
+            </div>
+        </form>
+    </div>
+</div>
+<script src="../../public/js/common.js"></script>
+<script>
+    /*获取到Url里面的参数*/
+    //查询当前授权用户
+    $.get(getWebPath() + "api/weibo/nowUser",{}, function(r){
+        var user = r.object.user;
+        var token = r.object.token;
+        if(user == null || token == null){
+            window.location = "https://api.weibo.com/oauth2/authorize?client_id=3689934678&redirect_uri=http://chijun.xin/guower/api/weibo/checkCode";
+        }else{
+            $("#userName").val(user.screen_name);
+            $("#tokenOverTime").val(token.expire_in);
+            var t=setInterval(function () {
+                var time = $("#tokenOverTime").val()-1;
+                $("#tokenOverTime").val(time);
+            },1000)
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户银行卡</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../../public/plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <script src="../../public/libs/jquery.min.js"></script>
+
+    <script src="../../public/plugins/layui/layui.all.js"></script>
+    <script src="../../public/plugins/layui/css/layui.css"></script>
+    <script src="../../public/libs/bootstrap.min.js"></script>
+    <script src="../../public/libs/vue.min.js"></script>
+    <script src="../../public/plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+    <!--工具插件-->
+    <script src="../../public/plugins/accounting.min.js"></script>
+    <script src="../../public/plugins/date_fns.min.js"></script>
+    <script src="../../public/plugins/lodash.min.js"></script>
+    <script src="../../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <!-- 查询条件根据需要打开 -->
+            <!-- <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.username" @keyup.enter="query" placeholder="用户名">
+            </div>
+            <a class="btn btn-default" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a> -->
+            <a v-if="hasPermission('tinfbankcardinfo:save')" class="btn btn-primary btn-sm" @click="add"><i
+                    class="fa fa-plus"></i>&nbsp;新增</a>
+            <a v-if="hasPermission('tinfbankcardinfo:update')" class="btn btn-primary btn-sm" @click="update"><i
+                    class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+            <a v-if="hasPermission('tinfbankcardinfo:delete')" class="btn btn-primary btn-sm" @click="del"><i
+                    class="fa fa-trash-o"></i>&nbsp;删除</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form id="addOrUpdateForm" class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-2 control-label"><span class="require">*</span>银行卡号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfBankCardInfo.bankcardcode" placeholder="银行卡号"
+                           data-rule="银行卡号: required; length(0~50)"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"><span class="require">*</span>银行名称</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfBankCardInfo.bankcardname" placeholder="银行名称"
+                           data-rule="银行名称: required; length(0~50)"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"><span class="require">*</span>司机/用户ID</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfBankCardInfo.userid" placeholder="司机/用户ID"
+                           data-rule="司机/用户ID: required; "/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">创建人</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfBankCardInfo.createuser" placeholder="创建人"
+                           data-rule="创建人: required; length(0~50)"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">创建时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="tInfBankCardInfo.createtime" placeholder="创建时间"
+                           data-rule="创建时间: required; "/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../../public/js/generator/common/tinfbankcardinfo.js"></script>
+<!--nice validator-->
+<link href="../../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/nice-validator/jquery.validator.min.js"></script>
+<script src="../../public/plugins/nice-validator/local/zh-CN.js"></script>
+</body>
+</html>

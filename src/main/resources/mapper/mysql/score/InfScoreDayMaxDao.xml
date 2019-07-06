@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.score.InfScoreDayMaxDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.score.InfScoreDayMaxEntity" id="infScoreDayMaxMap">
+                    <result property="id" column="id"/>
+                    <result property="getType" column="get_type"/>
+                    <result property="getNumber" column="get_number"/>
+                    <result property="getMax" column="get_max"/>
+            </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.score.InfScoreDayMaxEntity">
+        SELECT *
+        FROM t_inf_score_day_max where id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.ourslook.guower.entity.score.InfScoreDayMaxEntity">
+        select * from t_inf_score_day_max
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+                                                <if test=" id_IN != null ">
+                        and `id` in
+                        <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                                                                                        <if test="getType != null and getType.trim() != ''">
+                            and `get_type` = #{getType}
+                        </if>
+                                                                                                            <if test="getNumber != null and getNumber.trim() != ''">
+                            and `get_number` = #{getNumber}
+                        </if>
+                                                                                                            <if test="getMax != null and getMax.trim() != ''">
+                            and `get_max` = #{getMax}
+                        </if>
+                                                        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_inf_score_day_max
+        <where>
+                                                <if test=" id_IN != null ">
+                        and `id` in
+                        <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                                                                                        <if test="getType != null and getType.trim() != ''">
+                            and `get_type` = #{getType}
+                        </if>
+                                                                                                            <if test="getNumber != null and getNumber.trim() != ''">
+                            and `get_number` = #{getNumber}
+                        </if>
+                                                                                                            <if test="getMax != null and getMax.trim() != ''">
+                            and `get_max` = #{getMax}
+                        </if>
+                                                        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.score.InfScoreDayMaxEntity">
+        INSERT INTO t_inf_score_day_max
+            (
+                                                            id , 
+                                                                                get_type , 
+                                                                                get_number , 
+                                                                                get_max 
+                                                )
+        VALUES
+        (
+                                            #{id}, 
+                                                            #{getType}, 
+                                                            #{getNumber}, 
+                                                            #{getMax}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.score.InfScoreDayMaxEntity">
+        update t_inf_score_day_max
+        <set>
+                                                                            <if test="getType != null">
+                        `get_type` = #{getType}, </if>
+                                                                <if test="getNumber != null">
+                        `get_number` = #{getNumber}, </if>
+                                                                <if test="getMax != null">
+                        `get_max` = #{getMax}</if>
+                                    </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_inf_score_day_max where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from t_inf_score_day_max where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

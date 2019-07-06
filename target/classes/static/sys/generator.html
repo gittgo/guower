@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>代码生成器</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../public/plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../public/css/main.css">
+    <script src="../public/libs/jquery.min.js"></script>
+    <script src="../public/plugins/layui/layui.all.js" type="text/javascript"></script>
+    <link href="../public/plugins/layui/css/layui.css" media="all" rel="stylesheet"/>
+    <script src="../public/libs/bootstrap.min.js"></script>
+    <script src="../public/libs/vue.min.js"></script>
+    <script src="../public/plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+    <!--nice validator-->
+    <link href="../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+    <script src="../public/plugins/nice-validator/jquery.validator.min.js"></script>
+    <script src="../public/plugins/nice-validator/local/zh-CN.js"></script>
+    <!--工具插件-->
+    <script src="../public/plugins/accounting.min.js"></script>
+    <script src="../public/plugins/date_fns.min.js"></script>
+    <script src="../public/plugins/moment.min.js"></script>
+    <script src="../public/plugins/lodash.min.js"></script>
+    <script src="../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp">
+    <div class="grid-btn">
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" v-model="q.tableName" @keyup.enter="query" placeholder="表名">
+        </div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" v-model="q.tableComment" @keyup.enter="query" placeholder="表备注">
+        </div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" id="createDate_BETWEEN" v-model="q.createDate_BETWEEN" @keyup.enter="query" placeholder="创建、更新时间">
+        </div>
+        <a class="btn btn-primary btn-sm" @click="reload"><i class="fa fa-search"></i>&nbsp;查询</a>
+        <a class="btn btn-primary btn-sm" @click="generator"><i class="fab fa-phoenix-framework"></i>&nbsp;生成代码</a>
+    </div>
+    <div class="form-group col-sm-12">
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<!--daterangepicker 时间控件; 如果有使用分段日期控件，请打开-->
+<link rel="stylesheet" type="text/css" media="all" href="../public/plugins/daterangepicker/daterangepicker.css"/>
+<script type="text/javascript" src="../public/plugins/daterangepicker/daterangepicker.js"></script>
+<!--业务相关-->
+<script src="../public/js/sys/generator.js"></script>
+</body>
+</html>

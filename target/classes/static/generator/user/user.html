@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>用户表</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../public/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="../../public/plugins/ztree/css/metroStyle/metroStyle.css">
+<link rel="stylesheet" href="../../public/css/main.css">
+<script src="../../public/libs/jquery.min.js"></script>
+
+<script src="../../public/plugins/layui/layui.js"></script>
+<link  href="../../public/plugins/layui/css/layui.css"  media="all" rel="stylesheet">
+<script src="../../public/libs/bootstrap.min.js"></script>
+<script src="../../public/libs/vue.min.js"></script>
+<script src="../../public/plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="../../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="../../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+<!--工具相关-->
+<script src="../../public/plugins/accounting.min.js"></script>
+<script src="../../public/plugins/date_fns.min.js"></script>
+<script src="../../public/plugins/moment.min.js"></script>
+<script src="../../public/plugins/lodash.min.js"></script>
+<script src="../../public/plugins/sortable.min.js"></script>
+<script src="../../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList == 1">
+		<div class="grid-btn">
+			<!-- 查询条件根据需要打开 -->
+			<div class="form-group col-sm-2">
+				<input type="text" class="form-control" v-model="q.userName" @keyup.enter="query" placeholder="用户名">
+			</div>
+			<div class="form-group col-sm-2">
+				<input type="text" class="form-control" v-model="q.tel" @keyup.enter="query" placeholder="手机号">
+			</div>
+			<div class="form-group col-sm-2">
+				<input type="text" class="form-control" v-model="q.nickName" @keyup.enter="query" placeholder="昵称">
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="userType" class="form-control" v-model="q.userType" @change="query">
+					<option value="">请选择用户类型</option>
+					<option value="1">app</option>
+					<option value="2">web</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="userLevel" class="form-control" v-model="q.userLevel" @change="query">
+					<option value="">请选择用户认证</option>
+					<option value="1">企业认证</option>
+					<option value="2">作者认证</option>
+					<option value="3">媒体认证</option>
+				</select>
+			</div>
+			<div class="form-group col-sm-2">
+				<select name="pushPosition" class="form-control" v-model="q.pushPosition" @change="query">
+					<option value="">请选择推送位置</option>
+					<option value="1">专栏作者</option>
+					<option value="2">企业专栏</option>
+					<option value="3">作者排行</option>
+				</select>
+			</div>
+			<!--<div class="form-group col-sm-2">-->
+				<!--<input type="text" class="form-control" v-model="q.state" @keyup.enter="query" placeholder="状态">-->
+			<!--</div>-->
+			<!--<div class="form-group col-sm-2">-->
+				<!--<input type="text" class="form-control" v-model="q.createDate" @keyup.enter="query" placeholder="创建时间">-->
+			<!--</div>-->
+            <!-- 如果操作非常少，2-3个就可以去掉 外面的div;否则请保留 -->
+            <div class="form-group col-sm-12">
+                <a class="btn btn-primary btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <!--<a v-if="hasPermission('user:info')" class="btn btn-primary btn-sm" @click="info"><i class="fa fa-info-circle"></i>&nbsp;查看</a>-->
+                <!--<a v-if="hasPermission('user:update')" class="btn btn-primary btn-sm" @click="operateByIds(1)"><i class="fa fa-arrow-circle-up"></i>&nbsp;发布</a>-->
+                <!--<a v-if="hasPermission('user:update')" class="btn btn-primary btn-sm" @click="operateByIds(2)"><i class="fa fa-check-square"></i>&nbsp;启用</a>-->
+                <!--<a v-if="hasPermission('user:update')" class="btn btn-primary btn-sm" @click="operateByIds(-1)"><i class="fa fa-times-circle"></i>&nbsp;禁用</a>&ndash;&gt;-->
+
+                <!--<a v-if="hasPermission('user:save')" class="btn btn-primary btn-sm" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+                <a v-if="hasPermission('user:update')" class="btn btn-primary btn-sm" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+                <!--没有确定好的模块不要加删除； 没有业务的可以真删除；有业务必须是逻辑删除；-->
+                <!-- <a v-if="hasPermission('user:delete')" class="btn btn-primary btn-sm" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+			</div>
+		</div>
+        <!-- <div class="col-sm-12" v-if="hasPermission('user:list')" >
+            <hr class="layui-bg-gray">
+            <div>
+                下载数据:
+                <a class="btn btn-link btn-sm" @click="exportsAllToExcel(false)"><i class="fa fa-file-excel-o"></i>&nbsp;Excel格式</a>
+                <a class="btn btn-link btn-sm" @click="exportsAllToExcel(true)"><i class="fa fa-file-text"></i>&nbsp;Csv格式</a>
+            </div>
+        </div>-->
+        <div class="form-group col-sm-12">
+            <!-- 列表table-->
+			<table  class="layui-hide" id="jqGrid" lay-filter="jqGridFilter"></table>
+        </div>
+    </div>
+
+    <!-- 新增、编辑-->
+    <div v-show="showList == 0" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form id="addOrUpdateForm" class="form-horizontal col-md-12" style="width: 100%;margin:auto">
+            <!--注意添加的时候各个字段的类型，整形、浮点型、手机号、邮箱、电话号、身份证、时间格式先后顺序大小、排序类型、唯一remote、 等常规的东西都要验证；各种必填非必填请多动脑子思考
+            🚫🚫🚫🚫🚫禁止偷懒，否则到测试手里就各种bug、各种系统异常
+            https://blog.csdn.net/postersxu/article/details/79304429
+            如：非负整数、排序： Integer（+0）;int_0_10000;  <input type="number" min="0" max="999999"
+            电话：tel
+            手机号：mobile
+            身份证：IDcard
+            中文字符：chinese
+            身份证：IDcard
+            double保留4位小数：money_0_9999999999999999
+            远程校验：remote
+            数字范围校验，不包含边界： range(m~n, false)
+            多选一校验： 如，手机号、电话、邮箱多选一
+            匹配校验，如确认密码、确认日期：date;datetime;match(前一个表单元素的name)、match(gt,第一个日期控件name,第二个日期控件name)
+           	时间控件选择：是否能够选择历史日期等等
+            -->
+			<div class="form-group  col-md-6" style="margin-bottom: -25px;">
+				<div class="col-sm-3 control-label">用户头像</div>
+				<div class="col-sm-9">
+					<img v-if="user.headPortrait != null && user.headPortrait != ''" id="myImageShow" :src="user.headPortrait" class="thumbnail" width="280px" height="180px"/>
+					<img v-if="user.headPortrait == null || user.headPortrait == ''" src="../../public/image/imgError.jpg" class="thumbnail" width="280px" height="180px"/>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label">推送位置</div>
+				<div class="col-sm-9" id="pushPositionDiv">
+					<div name="1" class="pushPositionCheckBox layui-unselect layui-form-checkbox"><span>专栏作者</span><i class="layui-icon layui-icon-ok">√</i></div>
+					<div name="2" class="pushPositionCheckBox layui-unselect layui-form-checkbox"><span>企业专栏</span><i class="layui-icon layui-icon-ok">√</i></div>
+					<div name="3" class="pushPositionCheckBox layui-unselect layui-form-checkbox"><span>作者排行</span><i class="layui-icon layui-icon-ok">√</i></div>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label">专栏作者排行</div>
+				<div class="col-sm-9">
+					<input type="number" class="form-control" v-model="user.pushOneSort" placeholder="专栏作者排行"
+						   data-rule="专栏作者排行:number;integer(+0);range(~99999)"
+					/>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label">企业专栏排行</div>
+				<div class="col-sm-9">
+					<input type="number" class="form-control" v-model="user.pushTwoSort" placeholder="企业专栏排行"
+						   data-rule="企业专栏排行:number;integer(+0);range(~99999)"
+					/>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+				<div class="col-sm-3 control-label">作者排行排行</div>
+				<div class="col-sm-9">
+					<input type="number" class="form-control" v-model="user.pushThreeSort" placeholder="作者排行排行"
+						   data-rule="作者排行排行:number;integer(+0);range(~99999)"
+					/>
+				</div>
+			</div>
+			<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">用户名</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="text" class="form-control" v-model="user.userName" placeholder="用户名"
+						 data-rule="用户名:length(0~255)"
+                         maxlength="255" />
+			    </div>
+			</div>
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label">密码</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="user.password" placeholder="密码"-->
+						 <!--data-rule="密码:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+			<!--</div>-->
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">手机号</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="number" class="form-control" v-model="user.tel" placeholder="手机号"
+						 data-rule="手机号:length(0~11)"
+                         maxlength="11" />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">昵称</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="text" class="form-control" v-model="user.nickName" placeholder="昵称"
+						 data-rule="昵称:length(0~255)                          "
+                         maxlength="255" />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">积分</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="number" class="form-control" v-model="user.score" placeholder="积分"
+						 data-rule="积分:number;integer(+0);"
+                          />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">用户类型</div>
+			   	<div class="col-sm-9">
+					<select disabled="disabled" name="userType" class="form-control" v-model="user.userType">
+						<option value="">请选择用户类型</option>
+						<option value="1">app</option>
+						<option value="2">web</option>
+					</select>
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">用户认证</div>
+			   	<div class="col-sm-9">
+					<select disabled="disabled" name="userLevel" class="form-control" v-model="user.userLevel">
+						<option value="">请选择用户认证</option>
+						<option value="1">企业认证</option>
+						<option value="2">作者认证</option>
+						<option value="3">媒体认证</option>
+					</select>
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">个性签名</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="text" class="form-control" v-model="user.signature" placeholder="个性签名"
+						 data-rule="个性签名:length(0~255)"
+                         maxlength="255" />
+			    </div>
+			</div>
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label">性别</div>-->
+			   	<!--<div class="col-sm-9">-->
+					<!--<select disabled="disabled" name="sex" v-model="user.sex" data-rule="性别:">-->
+						<!--<option value="">请选择性别</option>-->
+						<!--<option value="1">男</option>-->
+						<!--<option value="2">女</option>-->
+					<!--</select>-->
+			    <!--</div>-->
+			<!--</div>-->
+
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">文章数</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="number" class="form-control" v-model="user.newsNumber" placeholder="文章数"
+						 data-rule="文章数:number;integer(+0);range(~99999)"
+                          />
+			    </div>
+			</div>
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">总浏览量</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="number" class="form-control" v-model="user.totalBrowsing" placeholder="总浏览量"
+						 data-rule="总浏览量:number;integer(+0);range(~999999999)"
+                          />
+			    </div>
+			</div>
+
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label">状态</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="user.state" placeholder="状态"-->
+						 <!--data-rule="状态:required;                          number;"-->
+                          <!--/>-->
+			    <!--</div>-->
+			<!--</div>-->
+									<div class="form-group  col-md-6">
+			   	<div class="col-sm-3 control-label">创建时间</div>
+			   	<div class="col-sm-9">
+			      <input readonly="readonly" type="text" class="form-control" v-model="user.createDate" placeholder="创建时间"
+						 data-rule="创建时间:required;length(0~255)"
+                         maxlength="255" />
+			    </div>
+			</div>
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label">暂留</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="user.userRemarks2" placeholder="暂留"-->
+						 <!--data-rule="暂留:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+			<!--</div>-->
+									<!--<div class="form-group  col-md-6">-->
+			   	<!--<div class="col-sm-3 control-label">暂留</div>-->
+			   	<!--<div class="col-sm-9">-->
+			      <!--<input type="text" class="form-control" v-model="user.userRemarks3" placeholder="暂留"-->
+						 <!--data-rule="暂留:required;length(0~255)                          "-->
+                         <!--maxlength="255" />-->
+			    <!--</div>-->
+			<!--</div>-->
+							<div class="form-group  col-md-12">
+				<div class="col-sm-5 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="goBack" value="返回"/>
+			</div>
+		</form>
+	</div>
+
+    <!-- 查看详细信息-->
+    <!--
+    <div v-show="showList==2" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form id="viewForm" class="form-horizontal col-md-12" style="width: auto">
+														                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">用户名</div>
+                        <div class="col-sm-label">{{user.userName}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">密码</div>
+                        <div class="col-sm-label">{{user.password}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">手机号</div>
+                        <div class="col-sm-label">{{user.tel}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">昵称</div>
+                        <div class="col-sm-label">{{user.nickName}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">用户头像</div>
+                        <div class="col-sm-label">{{user.headPortrait}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">积分</div>
+                        <div class="col-sm-label">{{user.score}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">用户类型【1.app  2.web】</div>
+                        <div class="col-sm-label">{{user.userType}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">用户等级【1.企业认证  2.作者认证  3.媒体认证】</div>
+                        <div class="col-sm-label">{{user.userLevel}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">个性签名</div>
+                        <div class="col-sm-label">{{user.signature}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">性别【0.未知  1,男  2.女】</div>
+                        <div class="col-sm-label">{{user.sex}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">推送位置【1.专栏作者  2.企业专栏  3.作者排行】</div>
+                        <div class="col-sm-label">{{user.pushPosition}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">文章数</div>
+                        <div class="col-sm-label">{{user.newsNumber}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">总浏览量</div>
+                        <div class="col-sm-label">{{user.totalBrowsing}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">专栏作者排序值</div>
+                        <div class="col-sm-label">{{user.pushOneSort}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">企业专栏排序值</div>
+                        <div class="col-sm-label">{{user.pushTwoSort}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">作者排行排序值</div>
+                        <div class="col-sm-label">{{user.pushThreeSort}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">状态</div>
+                        <div class="col-sm-label">{{user.state}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">暂留</div>
+                        <div class="col-sm-label">{{user.createDate}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">暂留</div>
+                        <div class="col-sm-label">{{user.userRemarks2}}</div>
+                    </div>
+											                    <div class="form-group  col-md-6">
+                        <div class="col-sm-3 control-label">暂留</div>
+                        <div class="col-sm-label">{{user.userRemarks3}}</div>
+                    </div>
+							            <div class="form-group  col-md-12">
+                <div class="col-sm-5 control-label"></div>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="goBack" value="返回"/>
+            </div>
+        </form>
+    </div>
+	-->
+
+</div>
+
+<!--nice validator-->
+<link  href="../../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/nice-validator/jquery.validator.min.js" type="text/javascript"></script>
+<script src="../../public/plugins/nice-validator/local/zh-CN.js" type="text/javascript"></script>
+<script src="../../public/js/common.js"></script>
+<!-- datepicker  时间段使用laydate -->
+<!-- datepicker  普通时间酌情使用 -->
+<!--
+<link  href="../../public/plugins/bootstrap-datepicker/datepicker.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
+<link  href="../../public/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+-->
+
+<!-- bootstrap-select |  bootstrap-multiselect https://www.cnblogs.com/landeanfen/p/7457283.html | vue-multiselect.  -->
+<!--<link href="../../public/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" type="text/css"/>-->
+<!--<script src="../../public/plugins/bootstrap-select/js/bootstrap-select-multiple.js" type="text/javascript"></script>-->
+
+<!--boostrap-fileupload http://plugins.krajee.com/file-input/demo  || vue-dropzone https://rowanwins.github.io/vue-dropzone/  || zui uploader plupload -->
+
+<!--daterangepicker 时间段控件; 如果有使用分段日期控件，请打开-->
+<link rel="stylesheet" type="text/css" media="all" href="../../public/plugins/daterangepicker/daterangepicker.css"/>
+<script type="text/javascript" src="../../public/plugins/daterangepicker/daterangepicker.js"></script>
+
+<!--业务相关-->
+<script src="../../public/js/generator/user/user.js?v=ourslook00000627_1"></script>
+</body>
+</html>

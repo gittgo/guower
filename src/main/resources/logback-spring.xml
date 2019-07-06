@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="10 seconds">
+    <contextName>logback</contextName>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <!-- dev、test-->
+    <springProfile name="dev,test">
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="com.ourslook.guower" level="DEBUG" />
+        <logger name="org.apache.tomcat" level="ERROR" />
+        <logger name="com.alibaba.druid" level="trace" />
+    </springProfile>
+
+    <!-- prod -->
+    <springProfile name="pro">
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="com.ourslook.guower" level="ERROR" />
+    </springProfile>
+
+</configuration>

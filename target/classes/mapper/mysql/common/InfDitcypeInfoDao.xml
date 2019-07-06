@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.common.InfDitcypeInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.common.InfDitcypeInfoEntity" id="xaDitcypeInfoMap">
+        <result property="id" column="ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="createUser" column="CREATE_USER"/>
+        <result property="status" column="STATUS"/>
+        <result property="code" column="CODE"/>
+        <result property="name" column="NAME"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.ourslook.guower.entity.common.InfDitcypeInfoEntity">
+		select * from t_inf_ditcype_info where ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.ourslook.guower.entity.common.InfDitcypeInfoEntity">
+		select * from t_inf_ditcype_info
+		<where>
+			<if test="id != null and id.trim() != ''">
+				and `id` =  #{id})
+			</if>
+			<if test="code != null and code.trim() != ''">
+				and `code` like concat('%',#{code},'%')
+			</if>
+			<if test="name != null and name.trim() != ''">
+				and `name` like concat('%',#{name},'%')
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_inf_ditcype_info
+		<where>
+			<if test="id != null and id.trim() != ''">
+				and `id` =  #{id})
+			</if>
+			<if test="code != null and code.trim() != ''">
+				and `code` like concat('%',#{code},'%')
+			</if>
+			<if test="name != null and name.trim() != ''">
+				and `name` like concat('%',#{name},'%')
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.ourslook.guower.entity.common.InfDitcypeInfoEntity">
+		insert into t_inf_ditcype_info
+		(
+
+			 `create_Time` ,
+			 `create_User` ,
+			 `status` ,
+			 `code` ,
+			 `name`
+		)
+		values
+		(
+
+			#{createTime}, 
+			#{createUser}, 
+			#{status}, 
+			#{code}, 
+			#{name}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.ourslook.guower.entity.common.InfDitcypeInfoEntity">
+		update t_inf_ditcype_info
+		<set>
+			<if test="createTime != null">  `create_Time`  = #{createTime}, </if>
+			<if test="createUser != null"> `create_User`  = #{createUser}, </if>
+			<if test="status != null"> `status`  = #{status}, </if>
+			<if test="code != null"> `code`  = #{code}, </if>
+			<if test="name != null"> `name`  = #{name}</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<delete id="delete">
+#         先删数据表
+        DELETE FROM t_inf_dict_info WHERE type  = (SELECT t_inf_ditcype_info.code FROM t_inf_ditcype_info WHERE t_inf_dict_info.id = #{value});
+#         再删除分类表
+		delete from t_inf_ditcype_info where ID = #{value};
+	</delete>
+
+	<delete id="deleteBatch">
+#         先删数据表
+        DELETE FROM t_inf_dict_info WHERE type IN (SELECT info.code FROM t_inf_ditcype_info as info WHERE
+        info.id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        );
+#         再删除分类表
+		delete from t_inf_ditcype_info where ID in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

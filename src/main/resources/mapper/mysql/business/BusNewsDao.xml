@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.business.BusNewsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.business.BusNewsEntity" id="busNewsMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="smallTitle" column="small_title"/>
+        <result property="image" column="image"/>
+        <result property="smallImage" column="small_image"/>
+        <result property="tag" column="tag"/>
+        <result property="tag1" column="tag1"/>
+        <result property="tag2" column="tag2"/>
+        <result property="tag3" column="tag3"/>
+        <result property="mainText" column="main_text"/>
+        <result property="newsType" column="news_type"/>
+        <result property="lookTimes" column="look_times"/>
+        <result property="author" column="author"/>
+        <result property="responsibleEditor" column="responsible_editor"/>
+        <result property="releaseType" column="release_type"/>
+        <result property="releaseUserId" column="release_user_id"/>
+        <result property="releaseDate" column="release_date"/>
+        <result property="isAdvertisement" column="is_advertisement"/>
+        <result property="isHotspot" column="is_hotspot"/>
+        <result property="isRelease" column="is_release"/>
+        <result property="newsRemarks2" column="news_remarks2"/>
+        <result property="newsRemarks3" column="news_remarks3"/>
+        <result property="sort" column="sort"/>
+        <result property="sortTime" column="sort_time"/>
+        <result property="examineType" column="examine_type"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.business.BusNewsEntity">
+        select * from t_bus_news
+        where id = #{value}
+    </select>
+
+    <select id="queryObjectVo" resultType="com.ourslook.guower.vo.business.BusNewsVo">
+        select s.username as releaseUserName,u.nick_name as authorName,u.head_portrait as authorHeadPortrait,d.`name` as newsTypeName,t.* from t_bus_news t
+        LEFT JOIN sys_user s on (s.user_id = t.release_user_id)
+        LEFT JOIN t_user u on (u.id = t.author)
+        LEFT JOIN t_inf_dict_info d on (d.remarks = t.news_type and d.type = 'TYPE_NEWS')
+        where t.id = #{value} group by t.id
+    </select>
+
+    <select id="queryVoList" resultType="com.ourslook.guower.vo.business.BusNewsVo">
+        select s.username as releaseUserName,u.nick_name as authorName,d.`name` as newsTypeName,t.* from t_bus_news t
+        LEFT JOIN sys_user s on (s.user_id = t.release_user_id)
+        LEFT JOIN t_user u on (u.id = t.author)
+        LEFT JOIN t_inf_dict_info d on (d.remarks = t.news_type and d.type = 'TYPE_NEWS')
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and t.`id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="id != null and id.trim() != ''">
+                and t.`id` = #{id}
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and t.`title` like concat('%',#{title},'%')
+            </if>
+            <if test="smallTitle != null and smallTitle.trim() != ''">
+                and t.`small_title` like concat('%',#{smallTitle},'%')
+            </if>
+            <if test="image != null and image.trim() != ''">
+                and t.`image` like concat('%',#{image},'%')
+            </if>
+            <if test="smallImage != null and smallImage.trim() != ''">
+                and t.`small_image` like concat('%',#{smallImage},'%')
+            </if>
+            <if test="tag != null and tag.trim() != ''">
+                and t.`tag` = #{tag}
+            </if>
+            <if test="tag1 != null and tag1.trim() != ''">
+                and t.`tag1` like concat('%',#{tag1},'%')
+            </if>
+            <if test="tag2 != null and tag2.trim() != ''">
+                and t.`tag2` like concat('%',#{tag2},'%')
+            </if>
+            <if test="tag3 != null and tag3.trim() != ''">
+                and t.`tag3` like concat('%',#{tag3},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and t.`main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="newsType != null and newsType.trim() != ''">
+                and t.`news_type` = #{newsType}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and t.`look_times` = #{lookTimes}
+            </if>
+            <if test="author != null and author.trim() != ''">
+                and t.`author` = #{author}
+            </if>
+            <if test="responsibleEditor != null and responsibleEditor.trim() != ''">
+                and t.`responsible_editor` like concat('%',#{responsibleEditor},'%')
+            </if>
+            <if test="releaseType != null and releaseType.trim() != ''">
+                and t.`release_type` = #{releaseType}
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and t.`release_user_id` = #{releaseUserId}
+            </if>
+            <if test="isAdvertisement != null and isAdvertisement.trim() != ''">
+                and t.`is_advertisement` = #{isAdvertisement}
+            </if>
+            <if test="isHotspot != null and isHotspot.trim() != ''">
+                and t.`is_hotspot` = #{isHotspot}
+            </if>
+            <if test="isRelease != null and isRelease.trim() != ''">
+                and t.`is_release` = #{isRelease}
+            </if>
+            <if test="newsRemarks2 != null and newsRemarks2.trim() != ''">
+                and t.`news_remarks2` like concat('%',#{newsRemarks2},'%')
+            </if>
+            <if test="newsRemarks3 != null and newsRemarks3.trim() != ''">
+                and t.`news_remarks3` like concat('%',#{newsRemarks3},'%')
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and t.`sort` = #{sort}
+            </if>
+            <if test="examineType != null and examineType.trim() != ''">
+                and t.`examine_type` = #{examineType}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and t.`release_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+            <if test="tagKey != null">
+                <!-- 这里是标签全匹配查询-->
+                and (t.tag1 = #{tagKey} or t.tag2 = #{tagKey} or t.tag3 = #{tagKey})
+            </if>
+        </where>
+        group by t.`id`
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by t.${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.tag desc,t.release_date desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryList" resultType="com.ourslook.guower.entity.business.BusNewsEntity">
+        select * from t_bus_news
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and `title` like concat('%',#{title},'%')
+            </if>
+            <if test="smallTitle != null and smallTitle.trim() != ''">
+                and `small_title` like concat('%',#{smallTitle},'%')
+            </if>
+            <if test="image != null and image.trim() != ''">
+                and `image` like concat('%',#{image},'%')
+            </if>
+            <if test="smallImage != null and smallImage.trim() != ''">
+                and `small_image` like concat('%',#{smallImage},'%')
+            </if>
+            <if test="tag != null and tag.trim() != ''">
+                and `tag` = #{tag}
+            </if>
+            <if test="tag1 != null and tag1.trim() != ''">
+                and `tag1` like concat('%',#{tag1},'%')
+            </if>
+            <if test="tag2 != null and tag2.trim() != ''">
+                and `tag2` like concat('%',#{tag2},'%')
+            </if>
+            <if test="tag3 != null and tag3.trim() != ''">
+                and `tag3` like concat('%',#{tag3},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and `main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="newsType != null and newsType.trim() != ''">
+                and `news_type` = #{newsType}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and `look_times` = #{lookTimes}
+            </if>
+            <if test="author != null and author.trim() != ''">
+                and `author` = #{author}
+            </if>
+            <if test="responsibleEditor != null and responsibleEditor.trim() != ''">
+                and `responsible_editor` like concat('%',#{responsibleEditor},'%')
+            </if>
+            <if test="releaseType != null and releaseType.trim() != ''">
+                and `release_type` = #{releaseType}
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and `release_user_id` = #{releaseUserId}
+            </if>
+            <if test="isAdvertisement != null and isAdvertisement.trim() != ''">
+                and `is_advertisement` = #{isAdvertisement}
+            </if>
+            <if test="isHotspot != null and isHotspot.trim() != ''">
+                and `is_hotspot` = #{isHotspot}
+            </if>
+            <if test="isRelease != null and isRelease.trim() != ''">
+                and `is_release` = #{isRelease}
+            </if>
+            <if test="newsRemarks2 != null and newsRemarks2.trim() != ''">
+                and `news_remarks2` like concat('%',#{newsRemarks2},'%')
+            </if>
+            <if test="newsRemarks3 != null and newsRemarks3.trim() != ''">
+                and `news_remarks3` like concat('%',#{newsRemarks3},'%')
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and `sort` = #{sort}
+            </if>
+            <if test="examineType != null and examineType.trim() != ''">
+                and `examine_type` = #{examineType}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and `release_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+            <if test="tagKey != null">
+                <!-- 这里是标签全匹配查询-->
+                and (tag1 = #{tagKey} or tag2 = #{tagKey} or tag3 = #{tagKey})
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by tag desc,release_date desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_bus_news
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and `title` like concat('%',#{title},'%')
+            </if>
+            <if test="smallTitle != null and smallTitle.trim() != ''">
+                and `small_title` like concat('%',#{smallTitle},'%')
+            </if>
+            <if test="image != null and image.trim() != ''">
+                and `image` like concat('%',#{image},'%')
+            </if>
+            <if test="smallImage != null and smallImage.trim() != ''">
+                and `small_image` like concat('%',#{smallImage},'%')
+            </if>
+            <if test="tag != null and tag.trim() != ''">
+                and `tag` = #{tag}
+            </if>
+            <if test="tag1 != null and tag1.trim() != ''">
+                and `tag1` like concat('%',#{tag1},'%')
+            </if>
+            <if test="tag2 != null and tag2.trim() != ''">
+                and `tag2` like concat('%',#{tag2},'%')
+            </if>
+            <if test="tag3 != null and tag3.trim() != ''">
+                and `tag3` like concat('%',#{tag3},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and `main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="newsType != null and newsType.trim() != ''">
+                and `news_type` = #{newsType}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and `look_times` = #{lookTimes}
+            </if>
+            <if test="author != null and author.trim() != ''">
+                and `author` = #{author}
+            </if>
+            <if test="responsibleEditor != null and responsibleEditor.trim() != ''">
+                and `responsible_editor` like concat('%',#{responsibleEditor},'%')
+            </if>
+            <if test="releaseType != null and releaseType.trim() != ''">
+                and `release_type` = #{releaseType}
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and `release_user_id` = #{releaseUserId}
+            </if>
+            <if test="isAdvertisement != null and isAdvertisement.trim() != ''">
+                and `is_advertisement` = #{isAdvertisement}
+            </if>
+            <if test="isHotspot != null and isHotspot.trim() != ''">
+                and `is_hotspot` = #{isHotspot}
+            </if>
+            <if test="isRelease != null and isRelease.trim() != ''">
+                and `is_release` = #{isRelease}
+            </if>
+            <if test="newsRemarks2 != null and newsRemarks2.trim() != ''">
+                and `news_remarks2` like concat('%',#{newsRemarks2},'%')
+            </if>
+            <if test="newsRemarks3 != null and newsRemarks3.trim() != ''">
+                and `news_remarks3` like concat('%',#{newsRemarks3},'%')
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and `sort` = #{sort}
+            </if>
+            <if test="examineType != null and examineType.trim() != ''">
+                and `examine_type` = #{examineType}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and `release_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+            <if test="tagKey != null">
+                <!-- 这里是标签全匹配查询-->
+                and (tag1 = #{tagKey} or tag2 = #{tagKey} or tag3 = #{tagKey})
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.business.BusNewsEntity">
+        INSERT INTO t_bus_news
+            (
+                                                            id , 
+                                                                                title , 
+                                                                                small_title , 
+                                                                                image , 
+                                                                                small_image , 
+                                                                                tag , 
+                                                                                tag1 , 
+                                                                                tag2 , 
+                                                                                tag3 , 
+                                                                                main_text , 
+                                                                                news_type , 
+                                                                                look_times , 
+                                                                                author , 
+                                                                                responsible_editor , 
+                                                                                release_type , 
+                                                                                release_user_id , 
+                                                                                release_date , 
+                                                                                is_advertisement , 
+                                                                                is_hotspot , 
+                                                                                is_release ,
+                                                                                news_remarks2 , 
+                                                                                news_remarks3 , 
+                                                                                sort , 
+                                                                                sort_time , 
+                                                                                examine_type 
+                                                )
+        VALUES
+        (
+                                            #{id}, 
+                                                            #{title}, 
+                                                            #{smallTitle}, 
+                                                            #{image}, 
+                                                            #{smallImage}, 
+                                                            #{tag}, 
+                                                            #{tag1}, 
+                                                            #{tag2}, 
+                                                            #{tag3}, 
+                                                            #{mainText}, 
+                                                            #{newsType}, 
+                                                            #{lookTimes}, 
+                                                            #{author}, 
+                                                            #{responsibleEditor}, 
+                                                            #{releaseType}, 
+                                                            #{releaseUserId}, 
+                                                            #{releaseDate}, 
+                                                            #{isAdvertisement}, 
+                                                            #{isHotspot}, 
+                                                            #{isRelease},
+                                                            #{newsRemarks2}, 
+                                                            #{newsRemarks3}, 
+                                                            #{sort}, 
+                                                            #{sortTime}, 
+                                                            #{examineType}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.business.BusNewsEntity">
+        update t_bus_news
+        <set>
+            <if test="title != null">
+                `title` = #{title},
+            </if>
+            <if test="smallTitle != null">
+                `small_title` = #{smallTitle},
+            </if>
+            <if test="image != null">
+                `image` = #{image},
+            </if>
+            <if test="smallImage != null">
+                `small_image` = #{smallImage},
+            </if>
+            <if test="tag != null">
+                `tag` = #{tag},
+            </if>
+            <if test="tag1 != null">
+                `tag1` = #{tag1},
+            </if>
+            <if test="tag2 != null">
+                `tag2` = #{tag2},
+            </if>
+            <if test="tag3 != null">
+                `tag3` = #{tag3},
+            </if>
+            <if test="mainText != null">
+                `main_text` = #{mainText},
+            </if>
+            <if test="newsType != null">
+                `news_type` = #{newsType},
+            </if>
+            <if test="lookTimes != null">
+                `look_times` = #{lookTimes},
+            </if>
+            <if test="author != null">
+                `author` = #{author},
+            </if>
+            <if test="responsibleEditor != null">
+                `responsible_editor` = #{responsibleEditor},
+            </if>
+            <if test="releaseType != null">
+                `release_type` = #{releaseType},
+            </if>
+            <if test="releaseUserId != null">
+                `release_user_id` = #{releaseUserId},
+            </if>
+            <if test="releaseDate != null">
+                `release_date` = #{releaseDate},
+            </if>
+            <if test="isAdvertisement != null">
+                `is_advertisement` = #{isAdvertisement},
+            </if>
+            <if test="isHotspot != null">
+                `is_hotspot` = #{isHotspot},
+            </if>
+            <if test="isRelease != null">
+                `is_release` = #{isRelease},
+            </if>
+            <if test="newsRemarks2 != null">
+                `news_remarks2` = #{newsRemarks2},
+            </if>
+            <if test="newsRemarks3 != null">
+                `news_remarks3` = #{newsRemarks3},
+            </if>
+            <if test="sort != null">
+                `sort` = #{sort},
+            </if>
+            <if test="sortTime != null">
+                `sort_time` = #{sortTime},
+            </if>
+            <if test="examineType != null">
+                `examine_type` = #{examineType}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_bus_news where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from t_bus_news where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getBrowseTotalByAuthor" resultType="int">
+        select ifnull(sum(look_times),0) from t_bus_news where author=#{value} and is_release=1 and examine_type=1
+    </select>
+
+    <select id="getHotNews" resultType="com.ourslook.guower.entity.business.BusNewsEntity">
+        SELECT * FROM (
+        SELECT * ,ROUND(RAND()) AS newno FROM t_bus_news GROUP BY id
+        )AS t where tag=1 and is_release = 1 ORDER BY t.release_date desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <update id="examine">
+        update t_bus_news
+        <set>
+            <if test="sysUserId != null">
+                `release_user_id` = #{sysUserId}, </if>
+
+            <if test="result != null">
+                `examine_type` = #{result}</if>
+        </set>
+        where `id` in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

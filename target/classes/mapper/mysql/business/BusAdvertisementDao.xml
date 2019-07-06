@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.business.BusAdvertisementDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.business.BusAdvertisementEntity" id="busAdvertisementMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="smallTitle" column="small_title"/>
+        <result property="image" column="image"/>
+        <result property="smallImage" column="small_image"/>
+        <result property="mainText" column="main_text"/>
+        <result property="advertisementType" column="advertisement_type"/>
+        <result property="lookTimes" column="look_times"/>
+        <result property="releaseUserId" column="release_user_id"/>
+        <result property="releaseDate" column="release_date"/>
+        <result property="jumpType" column="jump_type"/>
+        <result property="jumpUrl" column="jump_url"/>
+        <result property="jumpNewsId" column="jump_news_id"/>
+        <result property="advertisemenRemarks1" column="advertisemen_remarks1"/>
+        <result property="advertisemenRemarks2" column="advertisemen_remarks2"/>
+        <result property="advertisemenRemarks3" column="advertisemen_remarks3"/>
+        <result property="sort" column="sort"/>
+        <result property="sortTime" column="sort_time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.business.BusAdvertisementEntity">
+        select t.*,s.username as releaseUserName from t_bus_advertisement t
+        LEFT JOIN sys_user s on (s.user_id = t.release_user_id)
+        where t.id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.ourslook.guower.entity.business.BusAdvertisementEntity">
+        select t.*,s.username as releaseUserName from t_bus_advertisement t
+        LEFT JOIN sys_user s on (s.user_id = t.release_user_id)
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and t.`id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and t.`title` like concat('%',#{title},'%')
+            </if>
+            <if test="smallTitle != null and smallTitle.trim() != ''">
+                and t.`small_title` like concat('%',#{smallTitle},'%')
+            </if>
+            <if test="image != null and image.trim() != ''">
+                and t.`image` like concat('%',#{image},'%')
+            </if>
+            <if test="smallImage != null and smallImage.trim() != ''">
+                and t.`small_image` like concat('%',#{smallImage},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and t.`main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="advertisementType != null and advertisementType.trim() != ''">
+                and t.`advertisement_type` = #{advertisementType}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and t.`look_times` = #{lookTimes}
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and t.`release_user_id` = #{releaseUserId}
+            </if>
+            <if test="releaseDate_BETWEEN != null and releaseDate_BETWEEN.trim() != ''">
+                and t.`release_date` BETWEEN ${releaseDate_BETWEEN_1start} AND ${releaseDate_BETWEEN_2end}
+            </if>
+            <if test="jumpType != null and jumpType.trim() != ''">
+                and t.`jump_type` = #{jumpType}
+            </if>
+            <if test="jumpUrl != null and jumpUrl.trim() != ''">
+                and t.`jump_url` like concat('%',#{jumpUrl},'%')
+            </if>
+            <if test="jumpNewsId != null and jumpNewsId.trim() != ''">
+                and t.`jump_news_id` = #{jumpNewsId}
+            </if>
+            <if test="advertisemenRemarks1 != null and advertisemenRemarks1.trim() != ''">
+                and t.`advertisemen_remarks1` like concat('%',#{advertisemenRemarks1},'%')
+            </if>
+            <if test="advertisemenRemarks2 != null and advertisemenRemarks2.trim() != ''">
+                and t.`advertisemen_remarks2` like concat('%',#{advertisemenRemarks2},'%')
+            </if>
+            <if test="advertisemenRemarks3 != null and advertisemenRemarks3.trim() != ''">
+                and t.`advertisemen_remarks3` like concat('%',#{advertisemenRemarks3},'%')
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and t.`sort` = #{sort}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and t.`release_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by t.${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.sort,t.release_date desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_bus_advertisement
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="title != null and title.trim() != ''">
+                and `title` like concat('%',#{title},'%')
+            </if>
+            <if test="smallTitle != null and smallTitle.trim() != ''">
+                and `small_title` like concat('%',#{smallTitle},'%')
+            </if>
+            <if test="image != null and image.trim() != ''">
+                and `image` like concat('%',#{image},'%')
+            </if>
+            <if test="smallImage != null and smallImage.trim() != ''">
+                and `small_image` like concat('%',#{smallImage},'%')
+            </if>
+            <if test="mainText != null and mainText.trim() != ''">
+                and `main_text` like concat('%',#{mainText},'%')
+            </if>
+            <if test="advertisementType != null and advertisementType.trim() != ''">
+                and `advertisement_type` = #{advertisementType}
+            </if>
+            <if test="lookTimes != null and lookTimes.trim() != ''">
+                and `look_times` = #{lookTimes}
+            </if>
+            <if test="releaseUserId != null and releaseUserId.trim() != ''">
+                and `release_user_id` = #{releaseUserId}
+            </if>
+            <if test="jumpType != null and jumpType.trim() != ''">
+                and `jump_type` = #{jumpType}
+            </if>
+            <if test="jumpUrl != null and jumpUrl.trim() != ''">
+                and `jump_url` like concat('%',#{jumpUrl},'%')
+            </if>
+            <if test="jumpNewsId != null and jumpNewsId.trim() != ''">
+                and `jump_news_id` = #{jumpNewsId}
+            </if>
+            <if test="advertisemenRemarks1 != null and advertisemenRemarks1.trim() != ''">
+                and `advertisemen_remarks1` like concat('%',#{advertisemenRemarks1},'%')
+            </if>
+            <if test="advertisemenRemarks2 != null and advertisemenRemarks2.trim() != ''">
+                and `advertisemen_remarks2` like concat('%',#{advertisemenRemarks2},'%')
+            </if>
+            <if test="advertisemenRemarks3 != null and advertisemenRemarks3.trim() != ''">
+                and `advertisemen_remarks3` like concat('%',#{advertisemenRemarks3},'%')
+            </if>
+            <if test="sort != null and sort.trim() != ''">
+                and `sort` = #{sort}
+            </if>
+            <if test="createDate_BETWEEN != null and createDate_BETWEEN.trim() != ''">
+                and `release_date` BETWEEN #{createDate_BETWEEN_1start} AND #{createDate_BETWEEN_2end}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.business.BusAdvertisementEntity">
+        INSERT INTO t_bus_advertisement
+            (
+                                                            id , 
+                                                                                title , 
+                                                                                small_title , 
+                                                                                image , 
+                                                                                small_image , 
+                                                                                main_text , 
+                                                                                advertisement_type , 
+                                                                                look_times , 
+                                                                                release_user_id , 
+                                                                                release_date , 
+                                                                                jump_type , 
+                                                                                jump_url , 
+                                                                                jump_news_id , 
+                                                                                advertisemen_remarks1 , 
+                                                                                advertisemen_remarks2 , 
+                                                                                advertisemen_remarks3 , 
+                                                                                sort , 
+                                                                                sort_time 
+                                                )
+        VALUES
+        (
+                                            #{id}, 
+                                                            #{title}, 
+                                                            #{smallTitle}, 
+                                                            #{image}, 
+                                                            #{smallImage}, 
+                                                            #{mainText}, 
+                                                            #{advertisementType}, 
+                                                            #{lookTimes}, 
+                                                            #{releaseUserId}, 
+                                                            #{releaseDate}, 
+                                                            #{jumpType}, 
+                                                            #{jumpUrl}, 
+                                                            #{jumpNewsId}, 
+                                                            #{advertisemenRemarks1}, 
+                                                            #{advertisemenRemarks2}, 
+                                                            #{advertisemenRemarks3}, 
+                                                            #{sort}, 
+                                                            #{sortTime}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.business.BusAdvertisementEntity">
+        update t_bus_advertisement
+        <set>
+            <if test="title != null">
+                `title` = #{title},
+            </if>
+            <if test="smallTitle != null">
+                `small_title` = #{smallTitle},
+            </if>
+            <if test="image != null">
+                `image` = #{image},
+            </if>
+            <if test="smallImage != null">
+                `small_image` = #{smallImage},
+            </if>
+            <if test="mainText != null">
+                `main_text` = #{mainText},
+            </if>
+            <if test="advertisementType != null">
+                `advertisement_type` = #{advertisementType},
+            </if>
+            <if test="lookTimes != null">
+                `look_times` = #{lookTimes},
+            </if>
+            <if test="releaseUserId != null">
+                `release_user_id` = #{releaseUserId},
+            </if>
+            <if test="releaseDate != null">
+                `release_date` = #{releaseDate},
+            </if>
+            <if test="jumpType != null">
+                `jump_type` = #{jumpType},
+            </if>
+            <if test="jumpUrl != null">
+                `jump_url` = #{jumpUrl},
+            </if>
+            <if test="jumpNewsId != null">
+                `jump_news_id` = #{jumpNewsId},
+            </if>
+            <if test="advertisemenRemarks1 != null">
+                `advertisemen_remarks1` = #{advertisemenRemarks1},
+            </if>
+            <if test="advertisemenRemarks2 != null">
+                `advertisemen_remarks2` = #{advertisemenRemarks2},
+            </if>
+            <if test="advertisemenRemarks3 != null">
+                `advertisemen_remarks3` = #{advertisemenRemarks3},
+            </if>
+            <if test="sort != null">
+                `sort` = #{sort},
+            </if>
+            <if test="sortTime != null">
+                `sort_time` = #{sortTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_bus_advertisement where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from t_bus_advertisement where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryTotalByNewsId" resultType="int">
+        select count(*) from t_bus_advertisement where
+        `jump_news_id` in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

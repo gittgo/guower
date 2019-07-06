@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.common.InfFeedbackDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.common.InfFeedbackEntity" id="tInfFeedbackMap">
+        <result property="id" column="id"/>
+        <result property="feedbackuserid" column="FeedbackUserId"/>
+        <result property="feedbackcontent" column="FeedbackContent"/>
+        <result property="createDate" column="Create_date"/>
+        <!--<result property="createuser" column="CreateUser"/>-->
+        <!--<result property="modifyuser" column="ModifyUser"/>-->
+        <!--<result property="modifytime" column="ModifyTime"/>-->
+    </resultMap>
+    <select id="queryObject" resultType="com.ourslook.guower.entity.common.InfFeedbackEntity">
+        select *
+        from sys_full_feedback
+        where id = #{value}
+    </select>
+
+    <select id="queryVoList" resultType="com.ourslook.guower.vo.InfFeedbackVo">
+        SELECT
+        sff.*, su.username feedbackusername
+        FROM
+        sys_full_feedback sff
+        LEFT JOIN tb_user su ON sff.FeedbackUserId = su.userid
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and sff.id = #{id}
+            </if>
+            <if test="feedbackcontent != null and feedbackcontent.trim() != ''">
+                and sff.FeedbackContent like concat('%',#{feedbackcontent},'%')
+            </if>
+            <if test="feedbacksource != null and feedbacksource.trim() != ''">
+                and sff.FeedbackSource like concat('%',#{feedbacksource},'%')
+            </if>
+            <if test="feedbackuserid != null and feedbackuserid.trim() != ''">
+                and sff.FeedbackUserId like concat('%',#{feedbackuserid},'%')
+            </if>
+            <if test="feedbackusername != null and feedbackusername.trim() != ''">
+                and su.username like concat('%',#{feedbackusername},'%')
+            </if>
+            <if test="createDate != null and createDate.trim() != ''">
+                and sff.Create_date like concat('%',#{createDate},'%')
+            </if>
+            <if test="status != null">
+                and sff.status = #{status}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by sff.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryList" resultType="com.ourslook.guower.entity.common.InfFeedbackEntity">
+        select * from sys_full_feedback
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and id like concat('%',#{id},'%')
+            </if>
+            <if test="feedbackcontent != null and feedbackcontent.trim() != ''">
+                and FeedbackContent like concat('%',#{feedbackcontent},'%')
+            </if>
+            <if test="feedbacksource != null and feedbacksource.trim() != ''">
+                and FeedbackSource like concat('%',#{feedbacksource},'%')
+            </if>
+            <if test="feedbackuserid != null and feedbackuserid.trim() != ''">
+                and FeedbackUserId like concat('%',#{feedbackuserid},'%')
+            </if>
+            <if test="createDate != null and createDate.trim() != ''">
+                and Create_date like concat('%',#{createDate},'%')
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from sys_full_feedback feedback LEFT JOIN tb_user users ON users.userid =
+        feedback.FeedbackUserId
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and feedback.id like concat('%',#{id},'%')
+            </if>
+            <if test="feedbackcontent != null and feedbackcontent.trim() != ''">
+                and feedback.FeedbackContent like concat('%',#{feedbackcontent},'%')
+            </if>
+            <if test="feedbacksource != null and feedbacksource.trim() != ''">
+                and feedback.FeedbackSource like concat('%',#{feedbacksource},'%')
+            </if>
+            <if test="feedbackuserid != null and feedbackuserid.trim() != ''">
+                and feedback.FeedbackUserId like concat('%',#{feedbackuserid},'%')
+            </if>
+            <if test="createDate != null and createDate.trim() != ''">
+                and feedback.Create_date like concat('%',#{createDate},'%')
+            </if>
+            <if test="feedbackusername != null and feedbackusername.trim() != ''">
+                and users.username like concat('%',#{feedbackusername},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.common.InfFeedbackEntity" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_full_feedback
+        (
+            FeedbackContent,
+            FeedbackSource,
+            FeedbackUserId,
+            Create_date,
+            status,
+            tel
+        )
+        values
+            (
+                #{feedbackcontent},
+                #{feedbacksource},
+                #{feedbackuserid},
+                #{createDate},
+                #{status},
+                #{tel}
+            )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.common.InfFeedbackEntity">
+        update sys_full_feedback
+        <set>
+            <if test="feedbackcontent != null">FeedbackContent = #{feedbackcontent},</if>
+            <if test="feedbacksource != null">FeedbackSource = #{feedbacksource},</if>
+            <if test="feedbackuserid != null">FeedbackUserId = #{feedbackuserid},</if>
+            <if test="createDate != null">Create_date = #{createDate},</if>
+            <if test="status != 0">status = #{status}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from sys_full_feedback
+        where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from sys_full_feedback where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

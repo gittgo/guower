@@ -1,0 +1,74 @@
+package ${package}.entity;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ${package}.utils.jackson.CustomDoubleSerialize;
+import ${package}.utils.jackson.CustomPhotoImageSerialize;
+import ${package}.utils.validator.constraints.NotContainSpaces;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.time.LocalDateTime;
+
+
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+
+
+/**
+ * ${comments}
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@ApiModel(description = "${comments}")
+public class ${className}Entity implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+#foreach ($column in $columns)
+    /**
+     * ${column.comments}
+     */
+    @ApiModelProperty("${column.comments}")
+#if(!$column.isNullable && $column.attrType == 'String')
+    /**@NotBlank(message = "${column.comments}不能为空")*/
+#end
+#if($column.attrType == 'String')
+    /**@NotContainSpaces(message = "${column.comments}不能包含空格")*/
+#end
+#if($column.maxLength != 0 && $column.attrType == 'String')
+    @Length(message = "${column.comments}最长${column.maxLength}个字符", max = ${column.maxLength})
+#end
+    private $column.attrType $column.attrname;
+#end
+
+#foreach ($column in $columns)
+    #if($column.attrName.toLowerCase().contains('password'))
+    @JsonIgnore
+    #end
+    public void set${column.attrName}($column.attrType $column.attrname) {
+    #if($column.attrType == 'String')
+        this.$column.attrname = $column.attrname != null ? ($column.attrname).trim() : null;
+    #else
+        this.$column.attrname = $column.attrname;
+    #end
+	}
+
+    #if($column.attrType == 'Date' || $column.attrType == 'LocalDate' || $column.attrType == 'LocalDateTime' || $column.attrType == 'Clock')
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="Asia/Shanghai")
+    #elseif($column.attrType == 'BigDecimal' || $column.attrType == 'Double' || $column.attrType == 'Float')
+    @JsonSerialize(using = CustomDoubleSerialize.class)
+    #elseif($column.attrName.toLowerCase().contains('img') || $column.attrName.toLowerCase().contains('picture')  || $column.attrName.toLowerCase().contains('image')  || $column.attrName.toLowerCase().contains('photo'))
+    @JsonSerialize(using = CustomPhotoImageSerialize.class)
+    #end
+    public $column.attrType get${column.attrName}() {
+		return $column.attrname;
+	}
+#end
+}

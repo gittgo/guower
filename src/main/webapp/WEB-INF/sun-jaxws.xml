@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--webservice 使用，不用就请删除-->
+<endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
+    <!--servlet 已经在 spring boot 中注册-->
+    <endpoint name="Aurora3DSoap"
+              implementation="com.ourslook.guower.webservice.DemoSoapService"
+              url-pattern="/service/Aurora3DSoapR"/>
+</endpoints>

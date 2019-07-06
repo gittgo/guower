@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../public/plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../public/plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../public/css/main.css">
+    <script src="../public/libs/jquery.min.js"></script>
+
+    <script src="../public/plugins/layui/layui.js"></script>
+    <link href="../public/plugins/layui/css/layui.css" media="all" rel="stylesheet">
+    <script src="../public/libs/bootstrap.min.js"></script>
+    <script src="../public/libs/vue.min.js"></script>
+    <script src="../public/plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../public/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../public/plugins/ztree/jquery.ztree.all.min.js"></script>
+    <!--工具相关-->
+    <script src="../public/plugins/accounting.min.js"></script>
+    <script src="../public/plugins/date_fns.min.js"></script>
+    <script src="../public/plugins/moment.min.js"></script>
+    <script src="../public/plugins/lodash.min.js"></script>
+    <script src="../public/plugins/sortable.min.js"></script>
+    <script src="../public/js/common.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList == 1">
+        <div class="grid-btn">
+            <div class="form-group col-sm-2">
+                <input id="createDate_BETWEEN" type="text" class="form-control" v-model="q.createDate_BETWEEN"
+                       @keyup.enter="query" placeholder="发送时间">
+            </div>
+            <div class="form-group col-sm-2">
+                <select name="result" class="form-control" v-model="q.result" @change="query">
+                    <option value="">
+                        推送结果
+                    </option>
+                    <option value="1">
+                        成功
+                    </option>
+                    <option value="0">
+                        失败
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <select id="sel_search_platform" name="platform" class="form-control" v-model="q.platform"
+                        @change="query">
+                    <option value="">请选择推送平台</option>
+                    <optgroup label="android">
+                        <option value="android">android</option>
+                    </optgroup>
+                    <optgroup label="ios">
+                        <option value="ios_all">IOS全部</option>
+                        <option value="ios_apns_production_true">IOS生产</option>
+                        <option value="ios_apns_production_false">IOS测试</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <select name="errorCode" class="form-control" v-model="q.errorCode" @change="query">
+                    <option value="">请选择错误原因</option>
+                    <option value="1011">找不到推送的别名</option>
+                    <option value="1005">推送内容过长</option>
+                    <option value="1003">推送对象不能为空</option>
+                    <option value="8888_8888">JPUSH服务器异常</option>
+                </select>
+            </div>
+            <div class="form-group col-sm-12" style="float: left;">
+                <a class="btn btn-primary btn-sm" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a v-if="hasPermission('sys:jpushrecord:info')" class="btn btn-primary btn-sm" @click="info"><i
+                        class="fa fa-info-circle"></i>&nbsp;查看</a>
+                <a v-if="hasPermission('sys:jpushrecord:info')" class="btn btn-primary btn-sm" @click="showCharts"><i
+                        class="fa fa-info-circle"></i>&nbsp;查看图表</a>
+            </div>
+        </div>
+        <div class="form-group col-sm-12">
+            <table class="layui-hide" id="jqGrid" lay-filter="jqGridFilter"></table>
+        </div>
+    </div>
+
+    <!-- 查看详细信息-->
+    <div v-show="showList == 2" id="detailsDiv" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form id="viewForm" class="form-horizontal col-md-12" style="width: auto">
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">标题</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.title"
+                           placeholder="标题"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">副标题</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.subtitle"
+                           placeholder="副标题"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">发送时间</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.createDate"
+                           placeholder="发送时间"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">推送结果</div>
+                <div class="col-sm-9">
+                    <input id="result" readonly="readonly" @change="changeResultValue" type="text" class="form-control"
+                           v-model="sysJpushRecord.result" placeholder="推送结果"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">推送平台</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.platform"
+                           placeholder="推送平台"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">推送目标</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.audience"
+                           placeholder="推送目标"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">推送账号key</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.appKey"
+                           placeholder="推送账号key"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">推送账号secert</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.appSecert"
+                           placeholder="推送账号secert"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">错误码</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.errorCode"
+                           placeholder="错误码"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">推送失败原因</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.errorMsg"
+                           placeholder="推送失败原因"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">发送编号</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.sendNo"
+                           placeholder="发送编号"
+                    />
+                </div>
+            </div>
+            <div class="form-group  col-md-6">
+                <div class="col-sm-3 control-label">ios是否为生产环境</div>
+                <div class="col-sm-9">
+                    <input type="text" readonly="readonly" class="form-control" v-model="sysJpushRecord.apnsProduction"
+                           placeholder="ios是否为生产环境"
+                    />
+                </div>
+            </div>
+            <!--<div class="form-group  col-md-6">-->
+                <!--<div class="col-sm-3 control-label"><span class="require">*</span>&nbsp;推送失败原因</div>-->
+                <!--<div class="col-sm-9">-->
+                    <!--<textarea rows="3" disabled class="form-control" v-model="sysJpushRecord.errorMsg"-->
+                              <!--placeholder="推送失败原因"-->
+                              <!--data-rule="推送失败原因:required;length(0~2000)" maxlength="2000"></textarea>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="form-group  col-md-12">
+                <div class="col-sm-1 control-label">发送参数</div>
+                <div class="col-sm-11">
+                    <textarea readonly="readonly" name="notification" class="form-control" rows="6"
+                              v-model="sysJpushRecord.notification"></textarea>
+                </div>
+            </div>
+            <div class="form-group  col-md-12">
+                <div class="col-sm-5 control-label"></div>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="goBack" value="返回"/>
+            </div>
+        </form>
+    </div>
+
+    <!-- 查看详细信息-->
+    <div v-show="showList == 3" class="panel panel-default">
+        <div class="form-group col-md-12">
+            <div class="col-sm-1 control-label"></div>
+            <div class="col-sm-11" style="padding: 0px 50px 0px 20px">
+                <div id="myChartDiv"></div>
+            </div>
+        </div>
+        <div class="form-group  col-md-12">
+            <div class="col-sm-5 control-label"></div>
+            <!--<input type="button" class="btn btn-primary" @click="goBack" value="确定"/>-->
+            &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="goBack" value="返回"/>
+        </div>
+    </div>
+
+</div>
+
+<!--nice validator-->
+<link href="../public/plugins/nice-validator/jquery.validator.css" rel="stylesheet" type="text/css"/>
+<script src="../public/plugins/nice-validator/jquery.validator.min.js" type="text/javascript"></script>
+<script src="../public/plugins/nice-validator/local/zh-CN.js" type="text/javascript"></script>
+<script src="../public/js/common.js"></script>
+<!-- datepicker  时间段使用laydate -->
+<!-- datepicker  普通时间酌情使用 -->
+<!--
+<link  href="../../public/plugins/bootstrap-datepicker/datepicker.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
+<link  href="../../public/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css"/>
+<script src="../../public/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+-->
+
+<!-- bootstrap-select ||||| https://www.cnblogs.com/landeanfen/p/7457283.html | vue-multiselect.  flora使用 -->
+<link href="../public/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" type="text/css"/>
+<script src="../public/plugins/bootstrap-select/js/bootstrap-select-multiple.js" type="text/javascript"></script>
+
+<!--bootstrap-multiselect-->
+<link href="../public/plugins/bootstrap-multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css"/>
+<script src="../public/plugins/bootstrap-multiselect/bootstrap-multiselect.js" type="text/javascript"></script>
+
+<!--boostrap-fileupload http://plugins.krajee.com/file-input/demo  || vue-dropzone https://rowanwins.github.io/vue-dropzone/  || zui uploader plupload -->
+<!-- acherts相关 -->
+<script type="text/javascript" src="../public/js/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="../public/js/echarts/ecStat.min.js"></script>
+<script type="text/javascript" src="../public/js/echarts/dataTool.js"></script>
+<script type="text/javascript" src="../public/js/echarts/china.js"></script>
+<script type="text/javascript" src="../public/js/echarts/world.js"></script>
+<script type="text/javascript" src="../public/js/echarts/bmap.js"></script>
+
+<!--daterangepicker 时间段控件; 如果有使用分段日期控件，请打开-->
+<link rel="stylesheet" type="text/css" media="all" href="../public/plugins/daterangepicker/daterangepicker.css"/>
+<script type="text/javascript" src="../public/plugins/daterangepicker/daterangepicker.js"></script>
+
+<!--业务相关-->
+<script src="../public/js/sys/sysjpushrecord.js?v=ourslook00000605"></script>
+</body>
+</html>

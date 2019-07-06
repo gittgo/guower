@@ -1,0 +1,8 @@
+spring:
+    datasource:
+        username: guower
+        password: guowerdb123Xx_..
+        #jdbc:mysql://114.215.84.189:3306/spring-root-db?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        #jdbc\:mysql\://114.215.84.189\:3306/spring-root-db?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        #jdbc:oracle:thin:@115.236.15.162:1521:orcl
+        url: jdbc:mysql://119.23.222.210:3306/guowerdb?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai

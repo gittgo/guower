@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ourslook.guower.dao.SysConfigDao">
+    <select id="queryObject" resultType="com.ourslook.guower.entity.SysConfigEntity">
+		select * from sys_config where id = #{id}
+	</select>
+
+    <select id="queryList" parameterType="map" resultType="com.ourslook.guower.entity.SysConfigEntity">
+        select * from sys_config
+        <where>
+            <if test="id != null and id.trim() != ''">
+                and `id` = #{id})
+            </if>
+            <if test="code != null and code.trim() != ''">
+                and `code` like concat('%',#{code},'%')
+            </if>
+            <if test="code_IN != null">
+                and `code` in
+                <foreach item="item" index="index" collection="code_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="key != null and key.trim() != ''">
+                and `key` like concat('%',#{key},'%')
+            </if>
+            <if test="value != null and value.trim() != ''">
+                and `value` like concat('%',#{value},'%')
+            </if>
+            <if test="remark != null and remark.trim() != ''">
+                and `remark` like concat('%',#{remark},'%')
+            </if>
+            <if test="status != null and status.trim() != ''">
+                and `status` like concat('%',#{status},'%')
+            </if>
+            <if test="status_IN != null and status_IN.trim() != ''">
+                and `status` in
+                <foreach item="item" index="index" collection="status_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status_NE != null">
+                and `status` != #{status_NE}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by code desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" parameterType="map" resultType="int">
+        select count(*) from sys_config where status = 1
+        <if test="key != null and key.trim() != ''">
+            and `key` like concat('%',#{key},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.SysConfigEntity">
+        insert into sys_config
+            (
+               `key` ,
+               `value` ,
+               `status`,
+               `remark` ,
+               `code` ,
+               `create_time` ,
+               `update_time`
+            )
+        VALUES
+        (
+              #{key},
+              #{value},
+              #{status},
+              #{remark},
+              #{code},
+              #{createTime},
+              #{updateTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.SysConfigEntity">
+        update sys_config
+        <set>
+            <if test="key != null">
+                `key` = #{key},
+            </if>
+            <if test="value != null">
+                `value` = #{value},
+            </if>
+            <if test="status != null">
+                `status` = #{status},
+            </if>
+            <if test="remark != null">
+                `remark` = #{remark},
+            </if>
+            <if test="code != null">
+                `code` = #{code},
+            </if>
+            <if test="createTime != null">
+                `create_time` = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                `update_time` = #{updateTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 根据key，更新value -->
+    <update id="updateValueByKey" parameterType="map">
+		update sys_config set `value` = #{value} where `key` = #{key}
+	</update>
+
+    <!-- 根据key，查询value -->
+    <select id="queryByKey" parameterType="string" resultType="string">
+		select value from sys_config where `key` = #{key}
+	</select>
+
+
+    <delete id="deleteBatch" parameterType="int">
+        delete from sys_config where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据code，查询value -->
+    <select id="queryValueByCode" resultType="string">
+		select value from sys_config where `code` = #{value}
+	</select>
+
+    <!-- 根据code，查询Object -->
+    <select id="queryObjectByCode" resultType="com.ourslook.guower.entity.SysConfigEntity">
+		select * from sys_config where `code` = #{value}
+	</select>
+
+
+</mapper>

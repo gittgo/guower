@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ourslook.guower.dao.user.InfExamineDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.ourslook.guower.entity.user.InfExamineEntity" id="infExamineMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userType" column="user_type"/>
+        <result property="userName" column="user_name"/>
+        <result property="userIdCard" column="user_id_card"/>
+        <result property="userTel" column="user_tel"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userCertificatesImage" column="user_certificates_image"/>
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="enterpriseIdCard" column="enterprise_id_card"/>
+        <result property="enterpriseImage" column="enterprise_image"/>
+        <result property="result" column="result"/>
+        <result property="createDate" column="create_date"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="examineDate" column="examine_date"/>
+        <result property="remarks" column="remarks"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.ourslook.guower.entity.user.InfExamineEntity">
+        select u.`nick_name` as userNickName,s.`username` as sysUserName,t.* from t_inf_examine t
+        LEFT JOIN t_user u on (t.user_id = u.id)
+        LEFT JOIN sys_user s on (t.sys_user_id = s.user_id)
+        where t.id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.ourslook.guower.entity.user.InfExamineEntity">
+        select u.`nick_name` as userNickName,s.`username` as sysUserName,t.* from t_inf_examine t
+        LEFT JOIN t_user u on (t.user_id = u.id)
+        LEFT JOIN sys_user s on (t.sys_user_id = s.user_id)
+        <where>
+            <!-- mysql: columename1 = 1 和 columename1 = '1' 是一样，所以一般统一使用字符串类型 -->
+            <if test=" id_IN != null ">
+                and t.`id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userId != null and userId.trim() != ''">
+                and t.`user_id` = #{userId}
+            </if>
+            <if test="userType != null and userType.trim() != ''">
+                and t.`user_type` = #{userType}
+            </if>
+            <if test="userName != null and userName.trim() != ''">
+                and t.`user_name` like concat('%',#{userName},'%')
+            </if>
+            <if test="userIdCard != null and userIdCard.trim() != ''">
+                and t.`user_id_card` like concat('%',#{userIdCard},'%')
+            </if>
+            <if test="userTel != null and userTel.trim() != ''">
+                and t.`user_tel` like concat('%',#{userTel},'%')
+            </if>
+            <if test="userEmail != null and userEmail.trim() != ''">
+                and t.`user_email` like concat('%',#{userEmail},'%')
+            </if>
+            <if test="userCertificatesImage != null and userCertificatesImage.trim() != ''">
+                and t.`user_certificates_image` like concat('%',#{userCertificatesImage},'%')
+            </if>
+            <if test="enterpriseName != null and enterpriseName.trim() != ''">
+                and t.`enterprise_name` like concat('%',#{enterpriseName},'%')
+            </if>
+            <if test="enterpriseIdCard != null and enterpriseIdCard.trim() != ''">
+                and t.`enterprise_id_card` like concat('%',#{enterpriseIdCard},'%')
+            </if>
+            <if test="enterpriseImage != null and enterpriseImage.trim() != ''">
+                and t.`enterprise_image` like concat('%',#{enterpriseImage},'%')
+            </if>
+            <if test="result != null and result.trim() != ''">
+                and t.`result` = #{result}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by t.${sidx} ${order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from t_inf_examine
+        <where>
+            <if test=" id_IN != null ">
+                and `id` in
+                <foreach item="item" index="index" collection="id_IN" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userId != null and userId.trim() != ''">
+                and `user_id` = #{userId}
+            </if>
+            <if test="userType != null and userType.trim() != ''">
+                and `user_type` = #{userType}
+            </if>
+            <if test="userName != null and userName.trim() != ''">
+                and `user_name` like concat('%',#{userName},'%')
+            </if>
+            <if test="userIdCard != null and userIdCard.trim() != ''">
+                and `user_id_card` like concat('%',#{userIdCard},'%')
+            </if>
+            <if test="userTel != null and userTel.trim() != ''">
+                and `user_tel` like concat('%',#{userTel},'%')
+            </if>
+            <if test="userEmail != null and userEmail.trim() != ''">
+                and `user_email` like concat('%',#{userEmail},'%')
+            </if>
+            <if test="userCertificatesImage != null and userCertificatesImage.trim() != ''">
+                and `user_certificates_image` like concat('%',#{userCertificatesImage},'%')
+            </if>
+            <if test="enterpriseName != null and enterpriseName.trim() != ''">
+                and `enterprise_name` like concat('%',#{enterpriseName},'%')
+            </if>
+            <if test="enterpriseIdCard != null and enterpriseIdCard.trim() != ''">
+                and `enterprise_id_card` like concat('%',#{enterpriseIdCard},'%')
+            </if>
+            <if test="enterpriseImage != null and enterpriseImage.trim() != ''">
+                and `enterprise_image` like concat('%',#{enterpriseImage},'%')
+            </if>
+            <if test="result != null and result.trim() != ''">
+                and `result` = #{result}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.ourslook.guower.entity.user.InfExamineEntity">
+        INSERT INTO t_inf_examine
+            (
+                                                            id , 
+                                                                                user_id , 
+                                                                                user_type , 
+                                                                                user_name , 
+                                                                                user_id_card , 
+                                                                                user_tel , 
+                                                                                user_email , 
+                                                                                user_certificates_image , 
+                                                                                enterprise_name , 
+                                                                                enterprise_id_card , 
+                                                                                enterprise_image , 
+                                                                                result ,
+                                                                                create_date ,
+                                                                                sys_user_id ,
+                                                                                examine_date,
+                                                                                remarks
+                                                )
+        VALUES
+        (
+                                            #{id}, 
+                                                            #{userId}, 
+                                                            #{userType}, 
+                                                            #{userName}, 
+                                                            #{userIdCard}, 
+                                                            #{userTel}, 
+                                                            #{userEmail}, 
+                                                            #{userCertificatesImage}, 
+                                                            #{enterpriseName}, 
+                                                            #{enterpriseIdCard}, 
+                                                            #{enterpriseImage}, 
+                                                            #{result},
+                                                            #{createDate},
+                                                            #{sysUserId},
+                                                            #{examineDate},
+                                                            #{remarks}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="com.ourslook.guower.entity.user.InfExamineEntity">
+        update t_inf_examine
+        <set>
+            <if test="userId != null">
+                `user_id` = #{userId},
+            </if>
+            <if test="userType != null">
+                `user_type` = #{userType},
+            </if>
+            <if test="userName != null">
+                `user_name` = #{userName},
+            </if>
+            <if test="userIdCard != null">
+                `user_id_card` = #{userIdCard},
+            </if>
+            <if test="userTel != null">
+                `user_tel` = #{userTel},
+            </if>
+            <if test="userEmail != null">
+                `user_email` = #{userEmail},
+            </if>
+            <if test="userCertificatesImage != null">
+                `user_certificates_image` = #{userCertificatesImage},
+            </if>
+            <if test="enterpriseName != null">
+                `enterprise_name` = #{enterpriseName},
+            </if>
+            <if test="enterpriseIdCard != null">
+                `enterprise_id_card` = #{enterpriseIdCard},
+            </if>
+            <if test="enterpriseImage != null">
+                `enterprise_image` = #{enterpriseImage},
+            </if>
+            <if test="result != null">
+                `result` = #{result},
+            </if>
+            <if test="createDate != null">
+                `create_date` = #{createDate},
+            </if>
+            <if test="sysUserId != null">
+                `sys_user_id` = #{sysUserId},
+            </if>
+            <if test="examineDate != null">
+                `examine_date` = #{examineDate},
+            </if>
+            <if test="remarks != null">
+                `remarks` = #{remarks}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_inf_examine where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from t_inf_examine where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--审核-->
+    <update id="examine">
+        update t_inf_examine
+        <set>
+            <if test="result != null">
+                `result` = #{result},
+            </if>
+            <if test="sysUserId != null">
+                `sys_user_id` = #{sysUserId},
+            </if>
+            <if test="examineDate != null">
+                `examine_date` = #{examineDate},
+            </if>
+            <if test="remarks != null">
+                `remarks` = #{remarks},
+            </if>
+        </set>
+        where `id` in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="queryObjectByUserId" resultType="com.ourslook.guower.entity.user.InfExamineEntity">
+        select * from t_inf_examine where user_id=#{value} order by id desc limit 0,1
+    </select>
+
+</mapper>

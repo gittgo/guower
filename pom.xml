@@ -1,0 +1,819 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ourslook.guower</groupId>
+    <artifactId>guower</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>guower</name>
+    <url>http://maven.apache.org</url>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!--https://github.com/spring-projects/spring-boot/tree/v1.5.10.RELEASE/spring-boot-samples-->
+        <version>1.5.12.RELEASE</version>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <mybatis.spring.boot.version>1.2.0</mybatis.spring.boot.version>
+        <mysql.version>5.1.45</mysql.version>
+        <oracle.version>12.1.0.1</oracle.version>
+        <druid.version>1.1.0</druid.version>
+        <quartz.version>2.3.0</quartz.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons.fileupload.version>1.3.1</commons.fileupload.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
+        <commons.io.version>2.6</commons.io.version>
+        <commons.codec.version>1.10</commons.codec.version>
+        <commons.configuration.version>1.10</commons.configuration.version>
+        <fastjson.version>1.2.30</fastjson.version>
+        <shiro.version>1.3.2</shiro.version>
+        <kaptcha.version>0.0.9</kaptcha.version>
+        <velocity.version>1.7</velocity.version>
+        <org.jodd.version>3.5.2</org.jodd.version>
+        <javasimon.version>3.5.2</javasimon.version>
+        <docker.image.prefix>dazer</docker.image.prefix>
+
+        <!--swagger-->
+        <swagger.jerssey.version>1.5.12</swagger.jerssey.version>
+        <swagger.version>1.5.4</swagger.version>
+        <springfox-swagger2.version>2.6.1</springfox-swagger2.version>
+        <!--以下全是swagger文档目录 http://www.leftso.com/blog/402.html -->
+        <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
+        <asciidoctor.input.directory>${project.basedir}/src/main/resources/config/asciidoc</asciidoctor.input.directory>
+        <generated.asciidoc.directory>${project.build.directory}/asciidoc</generated.asciidoc.directory>
+        <asciidoctor.html.output.directory>${project.build.directory}/asciidoc/html</asciidoctor.html.output.directory>
+        <asciidoctor.pdf.output.directory>${project.build.directory}/asciidoc/pdf</asciidoctor.pdf.output.directory>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--spring redis and redis session start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-redis</artifactId>
+            <version>1.4.7.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--tomcat jetty 二选一 start-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <!--指定依赖范围为provided，这样tomcat 相关的jar就不会打包到war里了； 如果是provided：打成war 之后tomcat相关jira也会达到war里面。-->
+            <scope>runtime</scope>
+            <!--<scope>provided</scope>-->
+        </dependency>
+        <!--tomcat jetty 二选一end-->
+        <!--<dependency>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-jetty</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <!--数据库 加载oracel jdbc驱动包 -->
+        <dependency>
+            <groupId>cn.easyproject</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>c3p0</artifactId>
+                    <groupId>c3p0</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 解析html格式的字符串-->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+        <!--Springboot  集成swagger 通过springfox-swagger2实现SpringMVC的RESTful文档接口服务；-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+        <!--end-->
+        <!-- springboot 集成 jersey 、swagger 实现 JAX-RS Restful 開始 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jersey2-jaxrs</artifactId>
+            <version>${swagger.jerssey.version}</version>
+        </dependency>
+        <!-- springboot 集成 jersey 、swagger 实现 JAX-RS Restful 結束 -->
+
+        <!--通过swagger2markup来实现swagger2 Word/PDF/HTML的导出 start -->
+        <!--swagger本身不支持spring mvc的，springfox把swagger包装了一下，让他可以支持springmvc-->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>1.5.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.restdocs</groupId>
+            <artifactId>spring-restdocs-mockmvc</artifactId>
+            <version>1.1.2.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-staticdocs</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+        <!--通过swagger2markup来实现swagger2 Word/PDF/HTML的导出 end -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons.lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons.fileupload.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons-httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons.codec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${commons.configuration.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-ehcache</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.axet</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>${kaptcha.version}</version>
+        </dependency>
+
+        <!-- 代码生成器所需jar -->
+        <dependency>
+            <artifactId>velocity</artifactId>
+            <groupId>org.apache.velocity</groupId>
+            <version>${velocity.version}</version>
+        </dependency>
+        <!--工具库-->
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-core</artifactId>
+            <version>${org.jodd.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <!-- Commons E -->
+        <!-- poi S -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.16</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.16</version>
+        </dependency>
+        <!--解析用户浏览器相关信息工具-->
+        <dependency>
+            <groupId>eu.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>1.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-bean</artifactId>
+            <version>3.5.2</version>
+        </dependency>
+        <!--http 性能监控-->
+        <dependency>
+            <groupId>org.javasimon</groupId>
+            <artifactId>javasimon-spring</artifactId>
+            <version>${javasimon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javasimon</groupId>
+            <artifactId>javasimon-console-embed</artifactId>
+            <version>${javasimon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javasimon</groupId>
+            <artifactId>javasimon-javaee</artifactId>
+            <version>${javasimon.version}</version>
+        </dependency>
+        <!-- shiro+redis 第三方缓存插件 -->
+        <dependency>
+            <groupId>org.crazycake</groupId>
+            <artifactId>shiro-redis</artifactId>
+            <version>2.4.2.1-RELEASE</version>
+        </dependency>
+        <!--taobao fastdfs 第三方插件-->
+        <dependency>
+            <groupId>com.github.tobato</groupId>
+            <artifactId>fastdfs-client</artifactId>
+            <version>1.25.4-RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <version>1.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.11</version>
+        </dependency>
+
+        <!-- jpush Start -->
+        <dependency>
+            <groupId>cn.jpush.api</groupId>
+            <artifactId>jiguang-common</artifactId>
+            <version>1.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.jpush.api</groupId>
+            <artifactId>jpush-client</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+        <!-- jpush End -->
+
+        <!--web websocket start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!--web websocket end -->
+
+        <!--amqp start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <!--amqp end -->
+
+        <!-- restful jersey start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
+        </dependency>
+        <!-- restful jersey end -->
+
+        <!--webservice 使用-->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.2.6</version>
+        </dependency>
+        <!--webservice 使用 end -->
+
+        <!--mysql轻量级别兼容emoj表情,oracle默认就支持不用修改-->
+        <!-- https://mvnrepository.com/artifact/com.vdurmont/emoji-java -->
+        <!-- http://www.jianshu.com/p/bda2d030b0ce -->
+        <!-- https://github.com/vdurmont/emoji-java -->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>3.2.0.201312181205-r</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-cas</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.transaction/jta -->
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!--闫擘添加 视频截图-->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>0.8</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.jai-imageio/jai-imageio-core -->
+        <dependency>
+            <groupId>com.github.jai-imageio</groupId>
+            <artifactId>jai-imageio-core</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+        <!--Spring Boot LocalDateTime格式的支持，jsr310包支持-->
+        <!--http://blog.csdn.net/junlovejava/article/details/78112240-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.8.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-typehandlers-jsr310</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <!--word导出使用feemarker-->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.26-incubating</version>
+        </dependency>
+        <!--java平台轻量级密码包， 银联支付使用到了-->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.59</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
+        <!--静态资源;使用maven仓库的方式统一管理web静态资源，保证版本的正确行-->
+        <!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator -->
+        <!--http://www.webjars.org/-->
+        <!--http://localhost:8981/guower/webjars/swagger-ui/2.2.10/css/screen.css-->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>0.34</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+            <version>2.2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-core</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <!--baidu ueditor 非官方版本，官方mvn中心没有 -->
+        <dependency>
+            <groupId>cn.meddb</groupId>
+            <artifactId>ueditor</artifactId>
+            <version>20180110</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.10</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ezmorph</groupId>
+            <artifactId>ezmorph</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <!--本地jar-->
+        <dependency>
+            <groupId>alipay-sdk-java-2018</groupId>
+            <artifactId>pay</artifactId>
+            <version>20180104135026</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java-2018.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>emay</groupId>
+            <artifactId>emay</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/emay-sms-interface.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>fastdfs</groupId>
+            <artifactId>fastdfs</artifactId>
+            <version>1.25</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/fastdfs-client-java-1.25.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>yuntongxun</groupId>
+            <artifactId>sms</artifactId>
+            <version>2.6.34</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/yuntongxun_sms_sdk_java_v2.6.34.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+    <!--server config tomcat -->
+    <build>
+        <finalName>guower</finalName>
+        <plugins>
+            <!--插件1-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!--指定springboot启动类-->
+                    <mainClass>com.ourslook.guower.SpringBootMyApplication</mainClass>
+                </configuration>
+                <dependencies>
+                    <!-- 修改代码后自动生效，Reload Java classes without restarting the container -->
+                    <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>springloaded</artifactId>
+                        <version>1.2.6.RELEASE</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!--插件2-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>false</filtering>
+                        </resource>
+                    </webResources>
+                    <packagingExcludes>WEB-INF/classes/**/*.*,WEB-INF/lib/**/*</packagingExcludes>
+                </configuration>
+            </plugin>
+            <!--插件3-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <!--设置jdk的版本-->
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <optimize>true</optimize>
+                    <debug>true</debug>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>false</showWarnings>
+                    <compilerArguments>
+                        <verbose/>
+                        <!--bootclasspath windows； windows是分号；-->
+                        <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+                        <!--bootclasspath mac  mac 是冒号；-->
+                        <!--<bootclasspath>${java.home}/lib/rt.jar:${java.home}/lib/jce.jar</bootclasspath>-->
+                        <!--extdirs Windows下分隔符-->
+                        <extdirs>src\main\webapp\WEB-INF\lib</extdirs>
+                        <!--extdirs Mac下分隔符-->
+                        <!--<extdirs>${basedir}/src/main/webapp/WEB-INF/lib</extdirs>-->
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+            <!--插件4 maven docker 插件 -->
+            <!-- tag::plugin[] -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.13</version>
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory><!--指定dockerfile目录-->
+                    <!--docker服务器地址必填-->
+                    <dockerHost></dockerHost>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+            <!-- end::plugin[] -->
+            <!--插件5  tomcat mvn 启动插件; 适用于普通的java web项目，不适用spring boot; 2018年4月新增-->
+            <!--<plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                &lt;!&ndash;<artifactId>tomcat-maven-plugin</artifactId>&ndash;&gt;
+                &lt;!&ndash;<artifactId>tomcat7-maven-plugin</artifactId>&ndash;&gt;
+                <artifactId>tomcat8-maven-plugin</artifactId>
+                &lt;!&ndash;<version>2.2</version>&ndash;&gt;
+                <version>3.0-r1756463</version>
+                <configuration>
+                    <path>/guower</path>
+                    <port>7777</port>
+                    <uriEncoding>UTF-8</uriEncoding>
+                    <contextFile>context.xml</contextFile>
+                    <warSourceDirectory>webapp</warSourceDirectory>
+                    <systemProperties>
+                        <JAVA_OPTS>-Xmx128m</JAVA_OPTS>
+                    </systemProperties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+            <!--end::plugin[] -->
+            <!--插件6开始  2018年5月新增； 不要生成文档，注释掉； -->
+            <!-- Run the generated asciidoc through Asciidoctor to generate
+               other documentation types, such as PDFs or HTML5 -->
+            <!--通过Asciidoctor使得asciidoc生成其他的文档格式，例如：PDF 或者HTML5-->
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.3</version>
+                <!-- Include Asciidoctor PDF for pdf generation -->
+                <!--生成PDF-->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-pdf</artifactId>
+                        <version>1.5.0-alpha.14</version>
+                    </dependency>
+                    <!-- Comment this section to use the default jruby artifact provided by the plugin -->
+                    <dependency>
+                        <groupId>org.jruby</groupId>
+                        <artifactId>jruby-complete</artifactId>
+                        <version>1.7.21</version>
+                    </dependency>
+                </dependencies>
+
+                <!-- Configure generic document generation settings -->
+                <!--文档生成配置;-->
+                <configuration>
+                    <sourceDirectory>${asciidoctor.input.directory}</sourceDirectory>
+                    <sourceDocumentName>index.adoc</sourceDocumentName>
+                    <attributes>
+                        <doctype>book</doctype>
+                        <toc>left</toc>
+                        <toclevels>3</toclevels>
+                        <numbered></numbered>
+                        <hardbreaks></hardbreaks>
+                        <sectlinks></sectlinks>
+                        <sectanchors></sectanchors>
+                        <generated>${generated.asciidoc.directory}</generated>
+                    </attributes>
+                </configuration>
+                <!-- Since each execution can only handle one backend, run
+                   separate executions for each desired output type -->
+                <!--因为每次执行只能处理一个后端，所以对于每个想要的输出类型，都是独立分开执行-->
+                <executions>
+                    <!--html5-->
+                    <execution>
+                        <id>output-html</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>html5</backend>
+                            <outputDirectory>${asciidoctor.html.output.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!--pdf-->
+                    <execution>
+                        <id>output-pdf</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>pdf</backend>
+                            <outputDirectory>${asciidoctor.pdf.output.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- end::plugin[] -->
+        </plugins>
+    </build>
+
+
+    <repositories>
+        <!--Maven中央仓库地址整理 https://blog.csdn.net/win7system/article/details/51260282 -->
+        <!-- 设定主仓库，按设定顺序进行查找。 -->
+        <repository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!--maven配置依赖github上的项目 https://blog.csdn.net/mn960mn/article/details/48754697 -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <!-- 设定主仓库，按设定顺序进行查找。 -->
+        <pluginRepository>
+            <id>aliyun nexus public</id>
+            <name>aliyun nexus</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>alfresco-public</id>
+            <url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>alfresco-public-snapshots</id>
+            <url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mvnrepository</id>
+            <name>mvnrepository</name>
+            <url>http://mvnrepository.com/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven2</id>
+            <name>repo1.maven.org/maven2/</name>
+            <url>http://repo1.maven.org/maven2/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>beardedgeeks-releases</id>
+            <url>http://beardedgeeks.googlecode.com/svn/repository/releases</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

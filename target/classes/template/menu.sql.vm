@@ -1,0 +1,45 @@
+-- 菜单SQL
+INSERT INTO sys_menu (parent_id, name, url, perms, type, icon, order_num)
+    VALUES ('1', '${comments}', 'generator/${pathName}.html', NULL, '1', 'fa fa-fa', '6');
+
+-- 针对mysql
+-- 按钮父菜单ID
+set @parentId = @@identity;
+##菜单对应按钮SQL
+INSERT INTO sys_menu (parent_id, name, url, perms, type, icon, order_num)
+    SELECT @parentId, '查看', null, '${pathName}:list,${pathName}:info', '2', null, '6';
+INSERT INTO sys_menu (parent_id, name, url, perms, type, icon, order_num)
+    SELECT @parentId, '新增', null, '${pathName}:save', '2', null, '6';
+INSERT INTO sys_menu (parent_id, name, url, perms, type, icon, order_num)
+    SELECT @parentId, '修改', null, '${pathName}:update', '2', null, '6';
+INSERT INTO sys_menu (parent_id, name, url, perms, type, icon, order_num)
+    SELECT @parentId, '删除', null, '${pathName}:delete', '2', null, '6';
+
+
+##-- 针对oracle
+##declare
+##menu_seq    number;
+##system_date number;
+##begin
+##select SEQ_T_SYS_MENU.nextval
+##into menu_seq
+##from dual;
+##
+##select (SYSDATE - TO_DATE('1970-1-1 8', 'YYYY-MM-DD HH24')) * 86400000 + TO_NUMBER(TO_CHAR(SYSTIMESTAMP(3), 'FF'))
+##into system_date
+##from dual;
+##
+##-- 菜单SQL
+##INSERT INTO T_SYS_MENU (ID, MENU_PID, MENU_TYPE, MENU_NAME, MENU_URL, MENU_ICON, USER_TYPE, ORDER_NUM, SYS_STATUS, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+##VALUES (menu_seq, 0, 1, '${comments}', 'generator/${pathName}.html', 'fab fa-phoenix-framework', 0, 0, 1, 1, system_date, 1, system_date);
+##
+##-- 菜单对应按钮SQL
+##INSERT INTO T_SYS_MENU (ID, MENU_PID, MENU_TYPE, MENU_NAME, MENU_PERMS, USER_TYPE, ORDER_NUM, SYS_STATUS, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+##VALUES (SEQ_T_SYS_MENU.nextval, menu_seq, 2, '查看', '${pathName}:list,${pathName}:info', 0, 1, 1, 1, system_date, 1, system_date);
+##INSERT INTO T_SYS_MENU (ID, MENU_PID, MENU_TYPE, MENU_NAME, MENU_PERMS, USER_TYPE, ORDER_NUM, SYS_STATUS, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+##VALUES (SEQ_T_SYS_MENU.nextval, menu_seq, 2, '新增', '${pathName}:save', 0, 2, 1, 1, system_date, 1, system_date);
+##INSERT INTO T_SYS_MENU (ID, MENU_PID, MENU_TYPE, MENU_NAME, MENU_PERMS, USER_TYPE, ORDER_NUM, SYS_STATUS, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+##VALUES (SEQ_T_SYS_MENU.nextval, menu_seq, 2, '修改', '${pathName}:update', 0, 3, 1, 1, system_date, 1, system_date);
+##INSERT INTO T_SYS_MENU (ID, MENU_PID, MENU_TYPE, MENU_NAME, MENU_PERMS, USER_TYPE, ORDER_NUM, SYS_STATUS, CREATE_USER_ID, CREATE_TIME, UPDATE_USER_ID, UPDATE_TIME)
+##VALUES (SEQ_T_SYS_MENU.nextval, menu_seq, 2, '删除', '${pathName}:delete', 0, 4, 1, 1, system_date, 1, system_date);
+##end;

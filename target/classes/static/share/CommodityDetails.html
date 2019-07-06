@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1.0 maximum-scale=1.0 minimum-scale=1 user-scalable=0" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection"/>
+    <title>商品详情</title>
+    <link rel="stylesheet" href="./lib/swiper-4.2.2.min.css">
+    <style>
+        html {font-size: 13.33vw;}
+        body{
+            margin:0;
+            overflow-x: hidden;
+        }
+        .nav{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .36rem;
+            padding:.3rem 0 .3rem .3rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .swiper-wrapper{
+            /* height:4rem; */
+        }
+        .swiper-slide{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /*.swiper-slide img{*/
+            /*width: 100%;*/
+        /*}*/
+        .swiper-pagination-bullet{
+            background: #fff;
+            border: 1px solid #669ec8;
+        }
+        .swiper-pagination-bullet-active{
+            background: #999899;
+        }
+        .swiper-container-horizontal>.swiper-pagination-bullets, .swiper-pagination-custom, .swiper-pagination-fraction{
+            bottom: 0;
+        }
+        .container{
+            margin: 0 .3rem;
+            font-size: .28rem;
+        }
+        .flex-row{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .align-center{
+            align-items: center;
+        }
+        .info{
+            border-bottom: 1px solid #ddd;
+        }
+        .title{
+            font-size: .36rem;
+            font-weight: normal;
+            margin:.3rem 0 .6rem 0;
+        }
+        .small{
+            font-size: .26rem;
+            color: #333333;
+        }
+        .comment-title{
+            margin: .56rem 0 .38rem 0;
+        }
+        .user-box{
+            padding: .4rem 0 .3rem 0;
+        }
+        .user-img{
+            width: .9rem;
+            height:.9rem ;
+            border-radius: 50%;
+            margin-right: .25rem;
+        }
+        .star{
+            width: .2rem;
+        }
+        .comment-date{
+            color: #999;
+            font-size: .26rem;
+        }
+        .comment-img{
+            width: 1.45rem;
+            margin: .05rem;
+            height:1.45rem ;
+        }
+        .store-title{
+            margin-bottom: .3rem;
+        }
+        .store-item{
+            padding: .14rem .14rem .3rem .14rem;
+            border: 1px solid #ddd;
+            border-radius: .2rem;
+            margin-bottom: .23rem;
+            width: 44%;
+        }
+        .store-item-title{
+            margin: .2rem 0 .4rem 0;
+            width: 100%;
+            height: 0.7rem;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+        .node-user-comm{
+            display: none;
+            text-align: center;
+            font-size: .28rem;
+            color: #333;
+            padding: .5rem;
+        }
+    </style>
+    <script src="./lib/public.js"></script>
+</head>
+<body ontouchstart>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <!--<div class="swiper-slide"><img src="img/1.png"></div>-->
+            <!--<div class="swiper-slide"><img src="img/1.png"></div>-->
+            <!--<div class="swiper-slide"><img src="img/1.png"></div>-->
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <div class="container">
+        <div class="info">
+            <!--<h2 class="title">蒙牛特仑苏纯牛奶250ml*16盒营养升级 专属牧场 专属牧场</h2>-->
+            <!--<div class="small">排毒祛湿美食超过十分钟的早饭，明天早餐就酱紫吃风靡全球的抹茶，快速学习抹茶糕点制作关于吃皮皮虾。</div>-->
+            <!--<div class="flex-row" style="margin:.3rem 0 .7rem 0;font-size: .22rem; color: #abaeb2">-->
+                <!--<div>-->
+                    <!--<span >市场价 <span style="color: #000;margin-right: .26rem">￥ 70.00</span></span>-->
+                    <!--<span >节省 <span style="color: #000">￥ 2.10</span></span>-->
+                <!--</div>-->
+                <!--<div>月销售量 1234</div>-->
+            <!--</div>-->
+            <!--<div class="flex-row align-center" style="font-size: .24rem;display: flex;margin-bottom:.25rem;">-->
+                <!--<div>-->
+                    <!--到手价-->
+                    <!--<span style="color: red">￥67.90</span>-->
+                <!--</div>-->
+                <!--<img src="img/add.png" style="width: .53rem;height: .53rem">-->
+            <!--</div>-->
+        </div>
+        <div class="commentary">
+            <div class="comment-title flex-row">
+                <div style="font-size: .4rem;font-weight: bold;"><span style="border-bottom: 4px solid #59acff;padding-bottom: .2rem">评</span>价</div>
+                <div  style="color: #59acff;font-size: .24rem" onclick="goNewUrl()"><span class="num"></span> ></div>
+            </div>
+            <div class="user-box flex-row align-center">
+                <div class="flex-row">
+                    <img src="" class="user-img">
+                    <div >
+                        <div class="user-name"></div>
+                        <div class="star-img">
+                            <!--<img src="img/star.png" class="star">-->
+                            <!--<img src="img/star.png" class="star">-->
+                            <!--<img src="img/star.png" class="star">-->
+                            <!--<img src="img/star.png" class="star">-->
+                            <!--<img src="img/star.png" class="star">-->
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-date"></div>
+            </div>
+            <div class="node-user-comm">暂无评价</div>
+            <div class="content"></div>
+            <div style="margin: .3rem 0 .7rem 0" class="comment-img-box">
+                <!--<img src="img/1.png" class="comment-img">-->
+                <!--<img src="img/1.png" class="comment-img">-->
+                <!--<img src="img/1.png" class="comment-img">-->
+            </div>
+        </div>
+        <div class="store-box">
+            <div class="store-title">店铺商品</div>
+            <div class="flex-row " id="store-box" style="flex-wrap:wrap"></div>
+        </div>
+    </div>
+</body>
+<script src="./lib/jquery-3.3.1.min.js"></script>
+<script src="./lib/swiper-4.2.2.min.js"></script>
+<script>
+    var id = getQueryValue('id');
+    var nsukey = getQueryValue('nsukey');
+    var recommendcode = getQueryValue('recommendcode');
+    function goNewUrl(){
+       var url = "sign.html?recommendcode="+recommendcode;
+       window.location.href = url;
+    }
+    // var domain="http://47.100.34.60/guower";
+    // var id = 19
+    Ajax.Get({
+        url: '/api/product/productInfo', // 请求地址
+        data: {
+            productId: id
+            // productId:758
+        }
+    },function(res){
+        if(res.code===0){
+            var data = res.object
+            if(data.productImgs){
+                data.productImgs= data.productImgs.split(",");
+            }
+            data.monthNum = data.monthNum ? data.monthNum : '0';
+            var swiperImg = '';
+            for (var i in data.productImgs) {
+                swiperImg+="<div class='swiper-slide'><img src="+data.productImgs[i]+"></div>"
+            }
+            $('.swiper-wrapper').html(swiperImg);
+            $('.swiper-wrapper').height(document.body.clientWidth/4 *3)
+            var imgHeight = $('.swiper-slide img').width()/$('.swiper-slide img').height();
+            if(imgHeight>4/3){
+                $('.swiper-slide img').css('width','100%')
+            }else if(imgHeight === 4/3){
+                $('.swiper-slide img').css('width','100%');
+                $('.swiper-slide img').css('height','100%');
+            }else {
+                $('.swiper-slide img').css('height','100%')
+            }
+            var mySwiper = new Swiper('.swiper-container', {
+                autoplay: true,//可选选项，自动滑动
+                pagination: {
+                    el: '.swiper-pagination'
+                }
+            });
+            var priceSaving = data.productMarketPrice - data.productTheirPrice
+            var info = '';
+            info = "<h2 class='title'> "+ data.productName + " </h2>" +
+                "            <div class='small'>"+data.productIntroduce+"</div>" +
+                "            <div class='flex-row' style='margin:.3rem 0 .7rem 0;font-size: .22rem; color: #abaeb2'>" +
+                "                <div>" +
+                "                    <span >市场价 <span style='color: #000;margin-right: .26rem'>￥ "+data.productMarketPrice +"</span></span>" +
+                "                    <span >节省 <span style='color: #000'>￥ "+ priceSaving +"</span></span>" +
+                "                </div>" +
+                "                <div>月销售量 "+data.monthNum +"</div>" +
+                "            </div>" +
+                "            <div class='flex-row align-center' style='font-size: .24rem;display: flex;margin-bottom:.25rem;'>" +
+                "                <div>" +
+                "                    到手价" +
+                "                    <span style='color: red'>￥"+data.productTheirPrice +"</span>" +
+                "                </div>" +
+                "                <img onclick=\"goNewUrl()\" src='img/add.png' style='width: .53rem;height: .53rem'>" +
+                "            </div>"
+            $('.info').html(info)
+        $.ajax({
+            url: domain + '/api/product/viewInfoList',
+            type:"GET",
+            data: {
+                id:data.productcode,
+                pageCurrent:1,
+                pageSize:30
+            },
+            dataType: "json",
+            timeout: 30000,
+            cache: false,
+            error: function (res) {
+                console.log(res);
+            },
+            success: function (res) {
+                console.log(res)
+                if(res.code===0){
+                    var dataSource = res.object;
+                    var data;
+                    for (var i in dataSource){
+                        data = dataSource[0]
+                    }
+                    $('.num').text(res.object.length)
+                    $('.user-img').attr('src',data.userPhoto)
+                    $('.user-name').text(data.username)
+                    $('.comment-date').text(data.contenttime.substr(5,5))
+                    var star = ''
+                    for (var i=0; i< data.level;i++){
+                        star +=" <img src='img/star.png' class='star'>"
+                    }
+                    $('.star-img').html(star)
+                    $('.content').text(data.content)
+                    var contentImg =''
+                    if(data.contentImg){
+                        data.contentImg= data.contentImg.split(",");
+                        for (var i in data.contentImg){
+                            contentImg +="<img src=" + data.contentImg[i] + "  class='comment-img'>"
+                        }
+                        $('.comment-img-box').html(contentImg)
+                    }
+                    $('.node-user-comm').hide()
+                }else if(res.code===500){
+                    $('.node-user-comm').show()
+                    $('.user-box').hide()
+                }
+            }
+        });
+
+        Ajax.Get({
+            url: '/api/product/productsByShopId',
+            data: {
+                shopId:data.shopid,
+                schoolId:data.schoolid,
+                // productName:data.productName,
+                productStatus:2,
+                pageCurrent:1,
+                pageSize:4
+            }
+        },function(res){
+            if(res.code===0){
+                var data = res.object.busProductVoList;
+                var list = '';
+                for (var i in data) {
+                    var img;
+                    data[i].productImgs=data[i].productImgs.split(',')
+                    for (var j in data[i].productImgs){
+                        img=data[i].productImgs[j]
+                    }
+                    
+                    
+                    if(i <= 4){
+                        var savingPrice = data[i].productMarketPrice - data[i].productTheirPrice
+                        list+=" <div class='store-item'>" +
+                            "                    <img   src="+img+" style='width: 100%;height: 2.5rem' >" +
+                            "                    <div class='store-item-title'>"+data[i].productName+"</div>" +
+                            "                    <div class='flex-row ' style='align-items: flex-end'>" +
+                            "                        <div class='left'>" +
+                            "                            <div style='font-size: .22rem;color: #999999;margin-bottom: .01rem'>市场价 ¥"+data[i].productMarketPrice +"</div>" +
+                            "                            <div style='font-size: .22rem;color: #999999;margin-bottom: .2rem'>节省 ¥"+savingPrice+"</div>" +
+                            "                            <div>到手价 <span style='color: red'>¥"+data[i].productTheirPrice+"</span></div>" +
+                            "                        </div>" +
+                            "                        <img onclick=\"goNewUrl()\"  src='img/add.png' style='width: .5rem;height: .5rem'>" +
+                            "                    </div>" +
+                            "                </div>"
+                    }
+                }
+                $('#store-box').html(list)
+            }
+        });
+        };
+    });
+
+</script>
+</html>
