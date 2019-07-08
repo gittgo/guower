@@ -66,9 +66,9 @@ public class WebApiHomeController {
         //7*24快讯
         homeVo.setFastNews(getFastNews(1,10));
         //作者专栏
-        homeVo.setAuthorList(getColumnUser(Constant.PushPositionType.TYPE_PUSH_POSITION_ONE, 1, 3));
+        homeVo.setAuthorList(getColumnUser(Constant.PushPositionType.TYPE_PUSH_POSITION_ONE, 1, 6));
         //企业专栏
-        homeVo.setCompanyList(getColumnUser(Constant.PushPositionType.TYPE_PUSH_POSITION_TWO, 1, 3));
+        homeVo.setCompanyList(getColumnUser(Constant.PushPositionType.TYPE_PUSH_POSITION_TWO, 1, 6));
 
         XaResult<WebHomeVo> xaResult = new XaResult<>();
         xaResult.setObject(homeVo);
