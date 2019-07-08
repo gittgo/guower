@@ -1,7 +1,0 @@
-@charset "utf-8";
-@font-face {
-	font-family: "Taurus";
-	src: url('TaurusNormal.woff') format('woff'),
-	     url('TaurusNormal.ttf') format('truetype'),
-	     url('TaurusNormal.svg') format('svg');
-}

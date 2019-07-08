@@ -195,8 +195,12 @@
                         `look_times` = #{lookTimes}, </if>
             <if test="good != null">
                 `good` = #{good}, </if>
+            <if test="good == null">
+                `good` = 0, </if>
             <if test="bad != null">
                 `bad` = #{bad}, </if>
+            <if test="bad == null">
+                `bad` = 0, </if>
                                                                 <if test="fastnewsRemarks1 != null">
                         `fastnews_remarks1` = #{fastnewsRemarks1}, </if>
                                                                 <if test="fastnewsRemarks2 != null">
