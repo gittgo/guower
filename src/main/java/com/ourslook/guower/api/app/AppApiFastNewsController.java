@@ -67,7 +67,12 @@ public class AppApiFastNewsController {
         XaResult<BusFastNewsEntity> xr = new XaResult<>();
         if(id==0){return xr;}
         BusFastNewsEntity busFastNewsEntity = busFastNewsService.queryObject(id);
-        busFastNewsEntity.setGood(busFastNewsEntity.getGood()+1);
+        if(null == busFastNewsEntity || null== busFastNewsEntity.getGood() || "".equals(busFastNewsEntity.getGood())){
+            busFastNewsEntity.setGood(+1);
+        }else {
+            busFastNewsEntity.setGood(busFastNewsEntity.getGood()+1);
+        }
+
         busFastNewsService.update(busFastNewsEntity);
         xr.setObject(busFastNewsEntity);
         return xr;
@@ -87,7 +92,11 @@ public class AppApiFastNewsController {
         XaResult<BusFastNewsEntity> xr = new XaResult<>();
         if(id==0){return xr;}
         BusFastNewsEntity busFastNewsEntity = busFastNewsService.queryObject(id);
-        busFastNewsEntity.setBad(busFastNewsEntity.getBad()+1);
+        if(null == busFastNewsEntity || null== busFastNewsEntity.getBad() || "".equals(busFastNewsEntity.getBad())){
+            busFastNewsEntity.setBad(+1);
+        }else {
+            busFastNewsEntity.setBad(busFastNewsEntity.getBad()+1);
+        }
         busFastNewsService.update(busFastNewsEntity);
         xr.setObject(busFastNewsEntity);
         return xr;
