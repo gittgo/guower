@@ -26,8 +26,8 @@ public class SaticScheduleTask {
     private BusFastNewsService busFastNewsService;
 
     //3.添加定时任务
-    @Scheduled(cron = "*/5 * * * * ?")  // 5秒
-//    @Scheduled(cron = "0 */1 * * * ?")   // 1分
+//    @Scheduled(cron = "*/5 * * * * ?")  // 5秒
+    @Scheduled(cron = "0 */1 * * * ?")   // 1分
     //或直接指定时间间隔，例如：5秒
     //@Scheduled(fixedRate=5000)
     private void configureTasks() {
@@ -35,7 +35,7 @@ public class SaticScheduleTask {
         String outString =  HttpConnectUtil.doPost();
         JSONObject pa= JSONObject.parseObject(outString);
         JSONArray array = pa.getJSONArray("result_list");
-        System.out.println("------_________________--------------------");
+//        System.out.println("------_________________--------------------");
         for (int i = 0; i < array.size(); i++) {
             JSONObject jo = array.getJSONObject(i);
             newsflash newsflash = JSON.toJavaObject(jo,newsflash.class);
@@ -45,37 +45,37 @@ public class SaticScheduleTask {
             map.put("outWeb","1");
             List<BusFastNewsEntity> busFastNewsEntities = busFastNewsService.queryList(map);
             if(busFastNewsEntities.size()>0){
-                System.out.println("已经存在跳过！");
+//                System.out.println("已经存在跳过！");
                 continue;
             }
             // 整理数据
-        }
-        System.out.println("------_________________--------------------");
-        System.out.println("--------------------------");
-
-        //  C创建快报
-        BusFastNewsEntity busFastNewsEntity = new BusFastNewsEntity();
-//        busFastNewsEntity.setTitle(title.replace("鸵鸟区块链讯",""));
-//        busFastNewsEntity.setMainText(content.replace("鸵鸟区块链讯",""));
-        busFastNewsEntity.setReleaseUserId(1);
-        busFastNewsEntity.setReleaseUserName("superAdmin");
-//        if(null != date && !"".equals(date)){
-//            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//            LocalDateTime ldt = LocalDateTime.parse(date,df);
-//            busFastNewsEntity.setReleaseDate(ldt);
-//        }else {
+            //  创建快报
+            BusFastNewsEntity busFastNewsEntity = new BusFastNewsEntity();
+            //
+            busFastNewsEntity.setTitle(newsflash.getTitle().replace("鸵鸟区块链",""));
+            busFastNewsEntity.setTitle(busFastNewsEntity.getTitle().replace("鸵鸟",""));
+            //
+            busFastNewsEntity.setMainText(newsflash.getContent().replace("鸵鸟区块链",""));
+            busFastNewsEntity.setMainText(busFastNewsEntity.getMainText().replace("鸵鸟",""));
+            //
+            busFastNewsEntity.setReleaseUserId(1);
+            busFastNewsEntity.setReleaseUserName("superAdmin");
             busFastNewsEntity.setReleaseDate(LocalDateTime.now());
-//        }
-//        busFastNewsEntity.setGood(bull);     利好数
-//        busFastNewsEntity.setBad(bear);      利空
-        busFastNewsEntity.setGuowerIndex(5);
-        busFastNewsEntity.setIsNewsFlash(1);
-        busFastNewsEntity.setLookTimes(5883);
-//        if(null == title || "".equals(title) || null == content || "".equals(content) ){
-//
-//        }
-//        busFastNewsService.save(busFastNewsEntity);
-        System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
+            busFastNewsEntity.setGood(newsflash.getBull()+985);
+            busFastNewsEntity.setBad(newsflash.getBear()+756);
+            busFastNewsEntity.setGuowerIndex(5);
+            busFastNewsEntity.setIsNewsFlash(1);
+            busFastNewsEntity.setLookTimes(5883);
+            busFastNewsEntity.setOutWeb("1");  // 1代表鸵鸟区块链
+            busFastNewsEntity.setTuoniaoId(newsflash.getId());
+            if(null == newsflash.getTitle() || "".equals(newsflash.getTitle()) || null == newsflash.getContent() || "".equals(newsflash.getContent()) ){
+//                System.out.println("标题或内容为空！");
+                continue;
+            }
+            busFastNewsService.save(busFastNewsEntity);
+        }
+//        System.out.println("--------------------------");
+//        System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
     }
 
 

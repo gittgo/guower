@@ -103,7 +103,7 @@ public class BusFastNewsEntity implements Serializable {
      * 哪个网站
      */
     @ApiModelProperty("某网站")
-    private Integer outWeb;  // 1 鸵鸟
+    private String outWeb;  // 1 鸵鸟
 
     /**
      * 暂留
@@ -260,11 +260,12 @@ public class BusFastNewsEntity implements Serializable {
         this.tuoniaoId = tuoniaoId;
     }
 
-    public Integer getOutWeb() {
+
+    public String getOutWeb() {
         return outWeb;
     }
 
-    public void setOutWeb(Integer outWeb) {
+    public void setOutWeb(String outWeb) {
         this.outWeb = outWeb;
     }
 }
