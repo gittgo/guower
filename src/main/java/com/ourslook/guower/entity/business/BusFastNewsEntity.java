@@ -93,6 +93,18 @@ public class BusFastNewsEntity implements Serializable {
      */
     @ApiModelProperty("阅读量")
     private Integer lookTimes;
+
+    /**
+     * 鸵鸟id
+     */
+    @ApiModelProperty("鸵鸟id")
+    private Integer tuoniaoId;
+    /**
+     * 哪个网站
+     */
+    @ApiModelProperty("某网站")
+    private Integer outWeb;  // 1 鸵鸟
+
     /**
      * 暂留
      */
@@ -235,4 +247,24 @@ public class BusFastNewsEntity implements Serializable {
         public void setReleaseUserName(String releaseUserName) {
             this.releaseUserName = releaseUserName;
         }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Integer getTuoniaoId() {
+        return tuoniaoId;
+    }
+
+    public void setTuoniaoId(Integer tuoniaoId) {
+        this.tuoniaoId = tuoniaoId;
+    }
+
+    public Integer getOutWeb() {
+        return outWeb;
+    }
+
+    public void setOutWeb(Integer outWeb) {
+        this.outWeb = outWeb;
+    }
 }

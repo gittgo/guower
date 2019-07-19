@@ -20,6 +20,8 @@
                     <result property="fastnewsRemarks3" column="fastnews_remarks3"/>
                     <result property="good" column="good"/>
                     <result property="bad" column="bad"/>
+                    <result property="tuoniaoId" column="tuoniao_id"/>
+                    <result property="outWeb" column="out_web"/>
             </resultMap>
 
     <select id="queryObject" resultType="com.ourslook.guower.entity.business.BusFastNewsEntity">
@@ -59,6 +61,12 @@
             </if>
             <if test="lookTimes != null and lookTimes.trim() != ''">
                 and t.`look_times` = #{lookTimes}
+            </if>
+            <if test="tuoniaoId != null">
+                and t.`tuoniao_id` = #{tuoniaoId}
+            </if>
+            <if test="outWeb != null and outWeb.trim() != ''">
+                and t.`out_web` = #{outWeb}
             </if>
             <if test="fastnewsRemarks1 != null and fastnewsRemarks1.trim() != ''">
                 and t.`fastnews_remarks1` like concat('%',#{fastnewsRemarks1},'%')
@@ -117,6 +125,12 @@
             <if test="lookTimes != null and lookTimes.trim() != ''">
                 and `look_times` = #{lookTimes}
             </if>
+            <if test="tuoniaoId != null">
+                and t.`tuoniao_id` = #{tuoniaoId}
+            </if>
+            <if test="outWeb != null and outWeb.trim() != ''">
+                and t.`out_web` = #{outWeb}
+            </if>
             <if test="fastnewsRemarks1 != null and fastnewsRemarks1.trim() != ''">
                 and `fastnews_remarks1` like concat('%',#{fastnewsRemarks1},'%')
             </if>
@@ -149,7 +163,9 @@
                                                                                 fastnews_remarks2 , 
                                                                                 fastnews_remarks3 ,
                                                                                 good,
-                                                                                bad
+                                                                                bad,
+                                                                                tuoniao_id,
+                                                                                out_web
 
                                                 )
         VALUES
@@ -168,7 +184,9 @@
                                                             #{fastnewsRemarks2}, 
                                                             #{fastnewsRemarks3},
                                                             #{good},
-                                                            #{bad}
+                                                            #{bad},
+                                                            #{tuoniaoId},
+                                                            #{outWeb}
                                     )
     </insert>
 
