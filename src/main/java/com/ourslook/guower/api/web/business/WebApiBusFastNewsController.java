@@ -18,9 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -79,11 +83,24 @@ public class WebApiBusFastNewsController {
     ) {
         XaResult<BusFastNewsEntity> xr = new XaResult<>();
         BusFastNewsEntity busFastNewsEntity = busFastNewsService.queryObject(id);
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = busFastNewsEntity.getReleaseDate().atZone(zone).toInstant();
+        Date date = Date.from(instant);
+        busFastNewsEntity.setWeek(GetDayOfWeek(date));
         xr.setObject(busFastNewsEntity);
         return xr;
     }
 
-    /**
+    public String GetDayOfWeek(Date date){
+            final String dayNames[] = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五","星期六" };
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)-1;
+            if(dayOfWeek <0)dayOfWeek=0;
+            return dayNames[dayOfWeek];
+        }
+
+        /**
      * 添加快报
      */
     @PostMapping("addFastNews")

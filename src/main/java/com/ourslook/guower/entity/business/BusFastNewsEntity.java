@@ -130,7 +130,17 @@ public class BusFastNewsEntity implements Serializable {
     @Length(message = "暂留最长255个字符", max = 255)
     private String fastnewsRemarks3;
 
-        public void setId(Integer id) {
+    private String week;
+
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
+    }
+
+    public void setId(Integer id) {
             this.id = id;
     	}
 
