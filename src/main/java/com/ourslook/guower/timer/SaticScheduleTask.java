@@ -29,7 +29,7 @@ public class SaticScheduleTask {
 
     //3.添加定时任务
 //    @Scheduled(cron = "*/5 * * * * ?")  // 5秒
-    @Scheduled(cron = "0 */1 * * * ?")   // 1分
+    @Scheduled(cron = "0 */3 * * * ?")   // 1分
     //或直接指定时间间隔，例如：5秒
     //@Scheduled(fixedRate=5000)
     private void configureTasks() {
@@ -74,7 +74,13 @@ public class SaticScheduleTask {
 //                System.out.println("标题或内容为空！");
                 continue;
             }
-            busFastNewsService.save(busFastNewsEntity);
+            //  去除重复快报
+            Map maps = new HashMap();
+            maps.put("title",busFastNewsEntity.getTitle());
+            List queryList = busFastNewsService.queryList(maps);
+            if(queryList.isEmpty()){
+                busFastNewsService.save(busFastNewsEntity);
+            }
         }
 //        System.out.println("--------------------------");
 //        System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
@@ -83,7 +89,7 @@ public class SaticScheduleTask {
 
     //3.添加定时任务
 //    @Scheduled(cron = "*/5 * * * * ?")  // 5秒
-    @Scheduled(cron = "0 */1 * * * ?")   // 1分
+    @Scheduled(cron = "0 */3 * * * ?")   // 1分
     //或直接指定时间间隔，例如：5秒
     //@Scheduled(fixedRate=5000)
     private void configureBishijie() {
@@ -133,7 +139,13 @@ public class SaticScheduleTask {
 //                System.out.println("标题或内容为空！");
                 continue;
             }
-            busFastNewsService.save(busFastNewsEntity);
+            //  去除重复快报
+            Map maps = new HashMap();
+            maps.put("title",busFastNewsEntity.getTitle());
+            List queryList = busFastNewsService.queryList(maps);
+            if(queryList.isEmpty()){
+                busFastNewsService.save(busFastNewsEntity);
+            }
         }
         System.out.println("--------------------------");
         System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
