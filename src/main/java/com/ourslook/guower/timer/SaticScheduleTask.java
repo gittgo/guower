@@ -63,8 +63,8 @@ public class SaticScheduleTask {
             busFastNewsEntity.setReleaseUserId(1);
             busFastNewsEntity.setReleaseUserName("superAdmin");
             busFastNewsEntity.setReleaseDate(LocalDateTime.now());
-            busFastNewsEntity.setGood(newsflash.getBull()+(int)((Math.random()*9+1)*1000));
-            busFastNewsEntity.setBad(newsflash.getBear()+(int)(Math.random()*900)+100);
+            busFastNewsEntity.setGood((int)((Math.random() * 9 + 1) * Math.pow(10, 3-1)));
+            busFastNewsEntity.setBad(busFastNewsEntity.getGood()-(int)((Math.random() * 9 + 1) * Math.pow(10, 2-1)));
             busFastNewsEntity.setGuowerIndex(5);
             busFastNewsEntity.setIsNewsFlash(1);
             busFastNewsEntity.setLookTimes(5883);
@@ -128,8 +128,8 @@ public class SaticScheduleTask {
             busFastNewsEntity.setReleaseUserId(1);
             busFastNewsEntity.setReleaseUserName("superAdmin");
             busFastNewsEntity.setReleaseDate(LocalDateTime.now());
-            busFastNewsEntity.setGood((int)((Math.random()*9+1)*1000));
-            busFastNewsEntity.setBad((int)(Math.random()*900)+100);
+            busFastNewsEntity.setGood((int)((Math.random() * 9 + 1) * Math.pow(10, 3-1)));
+            busFastNewsEntity.setBad(busFastNewsEntity.getGood()-(int)((Math.random() * 9 + 1) * Math.pow(10, 2-1)));
             busFastNewsEntity.setGuowerIndex(5);
             busFastNewsEntity.setIsNewsFlash(1);
             busFastNewsEntity.setLookTimes(5883);
