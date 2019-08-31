@@ -146,7 +146,7 @@
         </where>
     </select>
 
-    <insert id="save" parameterType="com.ourslook.guower.entity.business.BusFastNewsEntity">
+    <insert id="save" parameterType="com.ourslook.guower.entity.business.BusFastNewsEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_bus_fast_news
             (
                                                             id , 

@@ -1,5 +1,6 @@
 package com.ourslook.guower.service.impl.business;
 
+import com.ourslook.guower.api.app.push.JPushAll;
 import com.ourslook.guower.dao.business.BusFastNewsDao;
 import com.ourslook.guower.entity.business.BusFastNewsEntity;
 import com.ourslook.guower.service.business.BusFastNewsService;
@@ -56,7 +57,8 @@ public class BusFastNewsServiceImpl implements BusFastNewsService {
 	
 	@Override
 	public void save(BusFastNewsEntity busFastNews){
-		busFastNewsDao.save(busFastNews);
+		 busFastNewsDao.save(busFastNews);
+        JPushAll.sendIOSANDAndroid("7*24小时快讯",busFastNews.getTitle(),busFastNews.getTitle(),busFastNews.getId()+"","1",1);
 	}
 
     @Override
