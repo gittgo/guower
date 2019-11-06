@@ -1,14 +1,14 @@
 package com.ourslook.guower.entity.business;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ourslook.guower.utils.result.XaResult;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-
+import java.util.Map;
 
 
 /**
@@ -131,6 +131,16 @@ public class BusFastNewsEntity implements Serializable {
     private String fastnewsRemarks3;
 
     private String week;
+
+    private Map weixinapi;
+
+    public Map<String,String> getWeixinapi() {
+        return weixinapi;
+    }
+
+    public void setWeixinapi(Map weixinapi) {
+        this.weixinapi = weixinapi;
+    }
 
     public String getWeek() {
         return week;

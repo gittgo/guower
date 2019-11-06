@@ -8,12 +8,12 @@ public class WxPublicNumberConfig {
     /**
      * 微信分配的公众号ID（开通公众号之后可以获取到）
      */
-    private static String appId = "";
+    private static String appId = "wxaf0c55277e5973ef";
 
     /**
      * 要注册人用weixin扫描才能看到取值
      */
-    private static String appSecret = "";
+    private static String appSecret = "d6512a662d433830dcf9dbed0f6fc19f";
 
     /**
      * 这个就是自己要保管好的私有Key了（切记只能放在自己的后台代码里，不能放在任何可能被看到源代码的客户端程序中）

@@ -14,6 +14,8 @@ import com.ourslook.guower.utils.pay.weixin.common.Util;
 import com.ourslook.guower.utils.pay.weixin.config.WxPublicNumberConfig;
 import com.ourslook.guower.utils.pay.weixin.config.WxpayConfig;
 import com.ourslook.guower.utils.result.XaResult;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -27,6 +29,7 @@ import java.util.Map;
 /**
  * @see WeChatController
  */
+@Controller
 public class WeixinMpInterface {
 
     //调用微信接口凭证
@@ -91,7 +94,8 @@ public class WeixinMpInterface {
      * @param nowUrl 当前网址
      * @return
      */
-    public XaResult getJsapiConfig(String nowUrl){
+    public Map getJsapiConfig(String nowUrl){
+        Map resultMap = new HashMap<>();
         try{
             Map map = new HashMap<>();
             String randomStr = PayMinProgressUtil.createCode(10);
@@ -103,16 +107,15 @@ public class WeixinMpInterface {
             map.put("url",nowUrl);
             Util.log("LOOK NOW URL:" + nowUrl);
             String result = WXPayUtil.generateSignatureByMapInSha1(map);
-            Map resultMap = new HashMap<>();
             resultMap.put("appId",WxpayConfig.getAppID());
             resultMap.put("timestamp",timestamp);
             resultMap.put("nonceStr",randomStr);
             resultMap.put("sign",result);
             resultMap.put("url",nowUrl);
             resultMap.put("jsapi_ticket",jsapi_ticket);
-            return new XaResult().setObject(resultMap);
+            return resultMap;
         }catch (Exception e){
-            return new XaResult().error(e.getMessage());
+            return resultMap;
         }
     }
 

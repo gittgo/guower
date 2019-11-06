@@ -6,6 +6,7 @@ import com.ourslook.guower.service.business.BusFastNewsService;
 import com.ourslook.guower.utils.Query;
 import com.ourslook.guower.utils.XaUtils;
 import com.ourslook.guower.utils.annotation.IgnoreAuth;
+import com.ourslook.guower.utils.pay.weixin.mp.WeixinMpInterface;
 import com.ourslook.guower.utils.result.R;
 import com.ourslook.guower.utils.result.XaResult;
 import io.swagger.annotations.Api;
@@ -45,6 +46,9 @@ public class WebApiBusFastNewsController {
     @Autowired
     private BusFastNewsService busFastNewsService;
 
+    @Autowired
+    private WeixinMpInterface weixinMpInterface;
+
     /**
      * 查询所有快报表
      */
@@ -65,7 +69,12 @@ public class WebApiBusFastNewsController {
         }
         query.put("sidx", "release_date");
         query.put("order", "desc");
-        xr.setObject(busFastNewsService.queryList(query));
+        List<BusFastNewsEntity> lists = busFastNewsService.queryList(query);
+        String url = request.getParameter("url");
+        for (int i = 0; i < lists.size(); i++) {
+            lists.get(i).setWeixinapi(weixinMpInterface.getJsapiConfig(url));
+        }
+        xr.setObject(lists);
         return xr;
     }
 
