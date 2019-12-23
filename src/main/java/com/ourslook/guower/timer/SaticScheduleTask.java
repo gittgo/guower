@@ -120,10 +120,10 @@ public class SaticScheduleTask {
             BusFastNewsEntity busFastNewsEntity = new BusFastNewsEntity();
             //
             busFastNewsEntity.setTitle(biShiJieNewFlash.getTitle());
-            busFastNewsEntity.setTitle(busFastNewsEntity.getTitle().replace("币世界","果味Pro"));
+            busFastNewsEntity.setTitle(busFastNewsEntity.getTitle().replace("币世界","果味财经"));
             //
             busFastNewsEntity.setMainText(biShiJieNewFlash.getContent());
-            busFastNewsEntity.setMainText(busFastNewsEntity.getMainText().replace("币世界","果味Pro"));
+            busFastNewsEntity.setMainText(busFastNewsEntity.getMainText().replace("币世界","果味财经"));
             //
             busFastNewsEntity.setReleaseUserId(1);
             busFastNewsEntity.setReleaseUserName("superAdmin");
