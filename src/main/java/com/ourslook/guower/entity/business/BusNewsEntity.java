@@ -186,6 +186,10 @@ public class BusNewsEntity implements Serializable {
     @ApiModelProperty("审核类型【2.未通过 0.审核中 1.通过】")
     private Integer examineType;
 
+    // 作者名称
+    @ApiModelProperty("作者名称")
+    private String authorname;
+
         public void setId(Integer id) {
             this.id = id;
     	}
@@ -367,5 +371,13 @@ public class BusNewsEntity implements Serializable {
 
     public void setIsRelease(Integer isRelease) {
         this.isRelease = isRelease;
+    }
+
+    public String getAuthorname() {
+        return authorname;
+    }
+
+    public void setAuthorname(String authorname) {
+        this.authorname = authorname;
     }
 }

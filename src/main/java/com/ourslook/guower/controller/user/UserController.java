@@ -3,7 +3,9 @@ package com.ourslook.guower.controller.user;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.ourslook.guower.controller.AbstractController;
+import com.ourslook.guower.entity.user.InfExamineEntity;
 import com.ourslook.guower.entity.user.UserEntity;
+import com.ourslook.guower.service.user.InfExamineService;
 import com.ourslook.guower.service.user.UserService;
 import com.ourslook.guower.utils.PageUtils;
 import com.ourslook.guower.utils.Query;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,6 +48,8 @@ public class UserController extends AbstractController {
     private UserService userService;
     @Resource
     private BeanMapper beanMapper;
+    @Autowired
+    private InfExamineService infExamineService;
 
     /**
      * 列表
@@ -81,11 +87,37 @@ public class UserController extends AbstractController {
     @RequiresPermissions("user:save")
     public R save(@RequestBody UserEntity user) {
 
-        //user.setCreatetime(new Date());
-        // user.setCreateuser(getUserId().toString());
+        if(null == user.getCreateDate() || "".equals(user.getCreateDate())){
+            user.setCreateDate(LocalDateTime.now());
+        }
+        if(null == user.getPassword() || "".equals(user.getPassword())){
+            user.setPassword("4531c442a4c9f27d8bfe271acca9f18b1040fefbe4d99e80dd9beb0baba6c12f");//  默认密码 zsq123456
+        }
+        if(null == user.getHeadPortrait() || "".equals(user.getHeadPortrait())){
+            user.setHeadPortrait("http://www.iguower.com:80/guower/upload/default/1577301406318_idafj.jpg");
+        }
+        if(null == user.getState() || "".equals(user.getState())){
+            user.setState(1);
+        }
         ValidatorUtils.validateEntity(user);
             userService.save(user);
 
+        // 创建认证
+        InfExamineEntity infExamine = new InfExamineEntity();
+        infExamine.setUserId(user.getId());
+        infExamine.setUserType(user.getUserType());
+        infExamine.setUserName(user.getUserName());
+        infExamine.setUserIdCard("000000000000000000");
+        infExamine.setUserTel(user.getTel());
+        infExamine.setUserEmail("guower@qq.com");
+        infExamine.setUserCertificatesImage(user.getHeadPortrait());
+        infExamine.setEnterpriseName("果味");
+        infExamine.setEnterpriseIdCard("1111111111");
+        infExamine.setResult(1);
+        infExamine.setCreateDate(LocalDateTime.now());
+        infExamine.setSysUserId(1);
+        infExamine.setExamineDate(LocalDateTime.now());
+        infExamineService.save(infExamine);
         return R.ok();
     }
 

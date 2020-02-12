@@ -6,8 +6,10 @@ import com.ourslook.guower.controller.AbstractController;
 import com.ourslook.guower.entity.SysUserEntity;
 import com.ourslook.guower.entity.business.BusNewsEntity;
 import com.ourslook.guower.entity.user.ExamineCheck;
+import com.ourslook.guower.entity.user.UserEntity;
 import com.ourslook.guower.service.business.BusAdvertisementService;
 import com.ourslook.guower.service.business.BusNewsService;
+import com.ourslook.guower.service.user.UserService;
 import com.ourslook.guower.utils.PageUtils;
 import com.ourslook.guower.utils.Query;
 import com.ourslook.guower.utils.ShiroUtils;
@@ -27,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,6 +55,8 @@ public class BusNewsController extends AbstractController {
     private BusAdvertisementService busAdvertisementService;
     @Resource
     private BeanMapper beanMapper;
+    @Autowired
+    private UserService userService;
 
     /**
      * 列表
@@ -97,8 +102,19 @@ public class BusNewsController extends AbstractController {
         busNews.setReleaseUserId(sysUser.getUserId().intValue());
         busNews.setReleaseDate(LocalDateTime.now());
         busNews.setLookTimes(0);
-        // 作者为绑定的用户作者
-        busNews.setAuthor(sysUser.getAuthor());
+        // 作者名称
+        if("".equals(busNews.getAuthorname()) || null == busNews.getAuthorname()  ){
+            // 作者为绑定的用户作者
+        }else {
+            Map<String,Object> map = new HashMap<>();
+            map.put("user_name",busNews.getAuthorname());
+            List<UserEntity> userEntities =  userService.queryList(map);
+            if(userEntities.isEmpty()){
+                busNews.setAuthor(sysUser.getAuthor());
+            }else {
+                busNews.setAuthor(userEntities.get(0).getId());
+            }
+        }
         busNews.setExamineType(1);//默认通过
         busNews.setIsRelease(0);//默认未发布
         busNews.setReleaseType(1);//后台发布

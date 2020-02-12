@@ -176,7 +176,7 @@ public class InfExamineController extends AbstractController {
              * modelIds客户端使用逗号分割，这里就要用数组接收
              */
             Query query = new Query();
-            query.put("id_IN", Lists.newArrayList(modelIds));
+            query.put("id``_IN", Lists.newArrayList(modelIds));
             List<InfExamineEntity> vos = infExamineService.queryList(query);
             infExamineService.exportsToExcels(vos, request, response, false);
         } else {

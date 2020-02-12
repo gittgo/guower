@@ -30,6 +30,7 @@
         <result property="sort" column="sort"/>
         <result property="sortTime" column="sort_time"/>
         <result property="examineType" column="examine_type"/>
+        <result property="authorname" column="authorname"/>
     </resultMap>
 
     <select id="queryObject" resultType="com.ourslook.guower.entity.business.BusNewsEntity">
@@ -359,7 +360,8 @@
                                                                                 news_remarks3 , 
                                                                                 sort , 
                                                                                 sort_time , 
-                                                                                examine_type 
+                                                                                examine_type,
+                                                                                authorname
                                                 )
         VALUES
         (
@@ -387,7 +389,8 @@
                                                             #{newsRemarks3}, 
                                                             #{sort}, 
                                                             #{sortTime}, 
-                                                            #{examineType}
+                                                            #{examineType},
+                                                            #{authorname}
                                     )
     </insert>
 
@@ -464,7 +467,10 @@
                 `sort_time` = #{sortTime},
             </if>
             <if test="examineType != null">
-                `examine_type` = #{examineType}
+                `examine_type` = #{examineType},
+            </if>
+            <if test="authorname != null">
+                `authorname` = #{authorname}
             </if>
         </set>
         where id = #{id}
