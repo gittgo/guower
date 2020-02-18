@@ -105,6 +105,7 @@ public class BusNewsController extends AbstractController {
         // 作者名称
         if("".equals(busNews.getAuthorname()) || null == busNews.getAuthorname()  ){
             // 作者为绑定的用户作者
+            busNews.setAuthor(sysUser.getAuthor());
         }else {
             Map<String,Object> map = new HashMap<>();
             map.put("user_name",busNews.getAuthorname());

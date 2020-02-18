@@ -215,6 +215,7 @@ $(function () {
                         $("#pushPositionDiv .layui-form-checked").each(function() { // 遍历推送位置选项
                             vm.user.pushPosition += $(this).attr("name");  // 每一个被选中项的值
                             vm.user.pushPosition += ",";  // 每一个被选中项的值
+
                         });
                         //限制：
                         //  未认证：不可推送
@@ -242,6 +243,8 @@ $(function () {
                                 return ;
                             }
                         }
+                        debugger
+                        vm.user.headPortrait = $("#imgUrl").val();
                         //限制end
                         if(vm.user.pushPosition.length > 1){
                             vm.user.pushPosition = vm.user.pushPosition.substr(0,vm.user.pushPosition.lastIndexOf(','));
@@ -384,6 +387,11 @@ $(function () {
                                 $(checkBoxItem).addClass("layui-form-checked");
                             }
                         }
+                    }
+                    //有图片则赋值
+                    if(vm.user.headPortrait != null && vm.user.headPortrait != ''){
+                        $("#myImageShow").attr("src",vm.user.headPortrait);
+                        $("#imgUrl").val(vm.user.headPortrait);
                     }
                 });
             },

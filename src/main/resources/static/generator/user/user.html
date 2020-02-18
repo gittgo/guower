@@ -26,6 +26,10 @@
 <script src="../../public/plugins/lodash.min.js"></script>
 <script src="../../public/plugins/sortable.min.js"></script>
 <script src="../../public/js/common.js"></script>
+<script src="../../public/js/ajaxfileupload.js"></script>
+	<script>
+        upload("news");
+	</script>
 </head>
 <body>
 <div id="rrapp" v-cloak>
@@ -121,8 +125,22 @@
 			<div class="form-group  col-md-6" style="margin-bottom: -25px;">
 				<div class="col-sm-3 control-label">用户头像</div>
 				<div class="col-sm-9">
-					<img v-if="user.headPortrait != null && user.headPortrait != ''" id="myImageShow" :src="user.headPortrait" class="thumbnail" width="280px" height="180px"/>
-					<img v-if="user.headPortrait == null || user.headPortrait == ''" src="../../public/image/imgError.jpg" class="thumbnail" width="280px" height="180px"/>
+					<!--<img v-if="user.headPortrait != null && user.headPortrait != ''" id="myImageShow" :src="user.headPortrait" class="thumbnail" width="280px" height="180px"/>-->
+					<!--<img v-if="user.headPortrait == null || user.headPortrait == ''" src="../../public/image/imgError.jpg" class="thumbnail" width="280px" height="180px"/>-->
+					<img id="myImageShow" :src="user.headPortrait"  class="thumbnail" width="280px" height="180px" src="../../public/image/imgError.jpg"/>
+					<input type="hidden" id="imgUrl" />
+					<span class="upload_file_parent">
+                        <button type="button" class="layui-btn">
+						    <i class="layui-icon">&#xe67c;</i>上传图片
+					    </button>
+                        <input type="file" id="uploadPhotoFile" name="myfile" class="upload_file" accept="image/*" :disabled="user.headPortrait == 2">
+                    </span>
+					<span class="upload_file_parent">
+						<button type="button" class="layui-btn layui-btn-danger">
+						    <i class="fa fa-trash-o"></i>&nbsp;删除
+					    </button>
+						<input type="button" class="upload_file_del" :disabled="user.headPortrait == 2">
+					</span>
 				</div>
 			</div>
 			<div class="form-group  col-md-6">
