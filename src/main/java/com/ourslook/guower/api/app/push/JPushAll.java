@@ -12,6 +12,7 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -21,8 +22,10 @@ import java.util.List;
  */
 public class JPushAll {
 
-    private final static String appKey = "1c3fc05dcd4fbd4420aa1acf";
-    private final static String masterSecret = "8a045a1f61e2013335dd8264";
+    private final static String appKey = "4898a40463fc114bebfba30e";
+    private final static String masterSecret = "478a95672493b951a76119ec";
+//    private final static String appKey = "1c3fc05dcd4fbd4420aa1acf";
+//    private final static String masterSecret = "8a045a1f61e2013335dd8264";
     private static JPushClient jPushClient = new JPushClient(masterSecret, appKey);
 
 
@@ -39,7 +42,7 @@ public class JPushAll {
         int result = 0;
         try {
             result = JPushAll.sendToAllAndroid( notification_title,  msg_title,  msg_content,  id,  type,  days);
-            result = JPushAll.sendToAllIos(notification_title,  msg_title,  msg_content,  id,  type,  days);
+//            result = JPushAll.sendToAllIos(notification_title,  msg_title,  msg_content,  id,  type,  days);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,11 +92,12 @@ public class JPushAll {
         int result = 0;
         try {
             PushPayload pushPayload= JPushAll.buildPushObject_android_all_alertWithTitle(notification_title,msg_title,msg_content,id,type,days);
-            //System.out.println(pushPayload);
+            System.out.println(pushPayload + "推送安卓");
             PushResult pushResult=jPushClient.sendPush(pushPayload);
             //System.out.println(pushResult);
             if(pushResult.getResponseCode()==200){
                 result=1;
+                System.out.println(pushPayload + "推送安卓成功！" );
             }
         } catch (Exception e) {
 
@@ -116,11 +120,12 @@ public class JPushAll {
         int result = 0;
         try {
             PushPayload pushPayload= JPushAll.buildPushObject_ios_all_alertWithTitle(notification_title,msg_title,msg_content,id,type,days);
-            //System.out.println(pushPayload);
+            System.out.println(pushPayload + "推送ios");
             PushResult pushResult=jPushClient.sendPush(pushPayload);
             //System.out.println(pushResult);
             if(pushResult.getResponseCode()==200){
                 result=1;
+                System.out.println(pushPayload + "推送ios成功！！！");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -318,7 +323,7 @@ public class JPushAll {
                         //指定当前推送的android通知
                         .addPlatformNotification(AndroidNotification.newBuilder()
                                 .setAlert(notification_title)
-                                .setTitle(notification_title)
+                                .setTitle(msg_title)
                                 //此字段为透传字段，不会显示在通知栏。用户可以通过此字段来做一些定制需求，如特定的key传要指定跳转的页面（value）
                                 .addExtra("id",id)
                                 .addExtra("messageType",type)
