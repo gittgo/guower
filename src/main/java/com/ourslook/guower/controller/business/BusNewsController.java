@@ -108,7 +108,7 @@ public class BusNewsController extends AbstractController {
             busNews.setAuthor(sysUser.getAuthor());
         }else {
             Map<String,Object> map = new HashMap<>();
-            map.put("user_name",busNews.getAuthorname());
+            map.put("userName",busNews.getAuthorname());
             List<UserEntity> userEntities =  userService.queryList(map);
             if(userEntities.isEmpty()){
                 busNews.setAuthor(sysUser.getAuthor());
