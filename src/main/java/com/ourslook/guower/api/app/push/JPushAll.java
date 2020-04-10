@@ -12,6 +12,7 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
+import org.apache.tools.ant.taskdefs.Sleep;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -22,10 +23,10 @@ import java.util.List;
  */
 public class JPushAll {
 
-    private final static String appKey = "4898a40463fc114bebfba30e";
-    private final static String masterSecret = "478a95672493b951a76119ec";
-//    private final static String appKey = "1c3fc05dcd4fbd4420aa1acf";
-//    private final static String masterSecret = "8a045a1f61e2013335dd8264";
+//    private final static String appKey = "4898a40463fc114bebfba30e";
+//    private final static String masterSecret = "478a95672493b951a76119ec";
+    private final static String appKey = "07fd99472be0f30fd9bf2df9";
+    private final static String masterSecret = "a9a05a36612abdbec881c276";
     private static JPushClient jPushClient = new JPushClient(masterSecret, appKey);
 
 
@@ -41,8 +42,10 @@ public class JPushAll {
     public static int sendIOSANDAndroid(String notification_title,String msg_title,String msg_content, String id, String type, int days) {
         int result = 0;
         try {
-            result = JPushAll.sendToAllAndroid( notification_title,  msg_title,  msg_content,  id,  type,  days);
-//            result = JPushAll.sendToAllIos(notification_title,  msg_title,  msg_content,  id,  type,  days);
+            result = JPushAll.sendToAllAndroid( msg_title,notification_title,  msg_content,  id,  type,  days);
+            Thread.sleep(50);
+            result = JPushAll.sendToAllIos(msg_title,notification_title,  msg_content,  id,  type,  days);
+            Thread.sleep(50);
         } catch (Exception e) {
             e.printStackTrace();
         }
