@@ -58,7 +58,9 @@ public class BusFastNewsServiceImpl implements BusFastNewsService {
 	@Override
 	public void save(BusFastNewsEntity busFastNews){
 		 busFastNewsDao.save(busFastNews);
-        JPushAll.sendIOSANDAndroid("7*24小时快讯",busFastNews.getTitle(),busFastNews.getTitle(),busFastNews.getId()+"","1",1);
+        if("1".equals(busFastNews.getIsPush())){
+            JPushAll.sendIOSANDAndroid("7*24小时快讯",busFastNews.getTitle(),busFastNews.getTitle(),busFastNews.getId()+"","1",1);
+        }
 	}
 
     @Override
@@ -78,6 +80,7 @@ public class BusFastNewsServiceImpl implements BusFastNewsService {
 
 	@Override
 	public void update(BusFastNewsEntity busFastNews){
+
         Objects.requireNonNull(busFastNews);
         final BusFastNewsEntity dest = new BusFastNewsEntity();
         Optional.ofNullable(busFastNews.getId()).ifPresent(aInteger -> {
@@ -85,6 +88,9 @@ public class BusFastNewsServiceImpl implements BusFastNewsService {
             beanMapper.copy(busFastNews, dests);
             busFastNewsDao.update(dests);
         });
+        if("1".equals(busFastNews.getIsPush())){
+            JPushAll.sendIOSANDAndroid("7*24小时快讯",busFastNews.getTitle(),busFastNews.getTitle(),busFastNews.getId()+"","1",1);
+        }
 	}
 
 

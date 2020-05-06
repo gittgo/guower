@@ -134,6 +134,8 @@ public class BusFastNewsEntity implements Serializable {
 
     private Map weixinapi;
 
+    private String isPush;
+
     public Map<String,String> getWeixinapi() {
         return weixinapi;
     }
@@ -287,5 +289,13 @@ public class BusFastNewsEntity implements Serializable {
 
     public void setOutWeb(String outWeb) {
         this.outWeb = outWeb;
+    }
+
+    public String getIsPush() {
+        return isPush;
+    }
+
+    public void setIsPush(String isPush) {
+        this.isPush = isPush;
     }
 }
