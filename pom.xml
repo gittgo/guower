@@ -136,7 +136,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.3</version>
+            <version>1.14.2</version>
         </dependency>
         <!--Springboot  集成swagger 通过springfox-swagger2实现SpringMVC的RESTful文档接口服务；-->
         <dependency>
